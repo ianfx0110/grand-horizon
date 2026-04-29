@@ -1,6 +1,9 @@
 -- Grand Horizon Hotel Management System
 -- Schema & Kenyan Heritage Seed Data (PostgreSQL)
 
+CREATE DATABASE GrandHorizon;
+USE GrandHorizon;
+
 -- Users Table (Staff & Admins)
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
