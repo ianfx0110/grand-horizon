@@ -4,18 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reservations | Grand Horizon</title>
-    <link rel="stylesheet" href="/public/style.css">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="icon" type="image/svg+xml" href="/logo.svg">
 </head>
 <body>
     <nav>
-        <div class="logo">Grand Horizon</div>
+        <div class="logo"><img src="/logo.svg" alt="Grand Horizon Logo"> Grand Horizon</div>
         <div class="nav-links">
-            <a href="/dashboard">Overview</a>
-            <a href="/rooms">Management</a>
-            <a href="/reservations" class="active">Reservations</a>
-            <a href="/admin" id="admin-link-global">Control Center</a>
-            <a href="/settings">Settings</a>
-            <a href="#" onclick="auth.logout()" style="color: var(--error); opacity: 0.8;">Sign Out</a>
+            <a href="/public/dashboard.html">Overview</a>
+            <a href="/public/rooms.html">Management</a>
+            <a href="/public/reservations.html" class="active">Reservations</a>
+            <a href="/public/admin.html" id="admin-link-global">Control Center</a>
+            <a href="/public/settings.html">Settings</a>
+            <a href="#" id="logout-btn" style="color: var(--error); opacity: 0.8;">Sign Out</a>
         </div>
         <div class="hamburger" id="hamburger">
             <span></span>
@@ -122,12 +123,11 @@
                     <div class="form-group">
                         <label>Luxury Rating (1-5)</label>
                         <div class="flex gap-4 justify-center" style="margin: 1.5rem 0;">
-                            ${[1, 2, 3, 4, 5].map(i => `
-                                <label style="cursor: pointer;">
-                                    <input type="radio" name="rating" value="${i}" required style="display: none;">
-                                    <span class="star-btn" onclick="setRating(${i})" style="font-size: 2rem; color: var(--border); transition: 0.3s;">★</span>
-                                </label>
-                            `).join('')}
+                             <label style="cursor: pointer;"><input type="radio" name="rating" value="1" required style="display: none;"><span class="star-btn" onclick="setRating(1)" style="font-size: 2rem; color: var(--border); transition: 0.3s;">★</span></label>
+                             <label style="cursor: pointer;"><input type="radio" name="rating" value="2" required style="display: none;"><span class="star-btn" onclick="setRating(2)" style="font-size: 2rem; color: var(--border); transition: 0.3s;">★</span></label>
+                             <label style="cursor: pointer;"><input type="radio" name="rating" value="3" required style="display: none;"><span class="star-btn" onclick="setRating(3)" style="font-size: 2rem; color: var(--border); transition: 0.3s;">★</span></label>
+                             <label style="cursor: pointer;"><input type="radio" name="rating" value="4" required style="display: none;"><span class="star-btn" onclick="setRating(4)" style="font-size: 2rem; color: var(--border); transition: 0.3s;">★</span></label>
+                             <label style="cursor: pointer;"><input type="radio" name="rating" value="5" required style="display: none;"><span class="star-btn" onclick="setRating(5)" style="font-size: 2rem; color: var(--border); transition: 0.3s;">★</span></label>
                         </div>
                     </div>
                     <div class="form-group">
@@ -146,19 +146,18 @@
     <footer>
         <div class="footer-grid">
             <div class="footer-brand">
-                <div class="logo">Grand Horizon</div>
+                <div class="logo"><img src="/logo.svg" alt="Grand Horizon Logo"> Grand Horizon</div>
                 <p>Digital Intelligence for Kenya's Premier Hospitality Group.</p>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; <span id="current-year"></span> Grand Horizon. Developed by Ian Kipkoech.</p>
-            <p>2026 Live Operations</p>
+            <p>&copy; 2026 Grand Horizon. Established 2026.</p>
+            <p>Premier Kenyan Hospitality | Live Operations</p>
         </div>
     </footer>
 
     <script src="/app.js"></script>
     <script>
-        document.getElementById('current-year').textContent = new Date().getFullYear();
         const tableBody = document.querySelector('#reservations-table tbody');
         const modal = document.getElementById('res-modal');
         const addBtn = document.getElementById('add-res-btn');
@@ -204,18 +203,18 @@
             rooms.filter(r => r.status === 'available').forEach(room => {
                 const opt = document.createElement('option');
                 opt.value = room.id;
-                opt.textContent = `Room ${room.number} • ${room.type} • $${room.price}/night`;
+                opt.textContent = 'Room ' + room.number + ' • ' + room.type + ' • $' + room.price + '/night';
                 roomSelect.appendChild(opt);
             });
         }
 
         window.completeReservation = async (id) => {
-            if (confirm('Mark this stay as completed and trigger the guest feedback protocol?')) {
+            if (confirm('Mark this stay as completed?')) {
                 const res = await api.updateReservationStatus(id, 'completed');
                 if (res.success) {
                     await loadData();
                     document.getElementById('feedback-reservation-id').value = id;
-                    document.getElementById('feedback-res-id').textContent = `#${id}`;
+                    document.getElementById('feedback-res-id').textContent = '#' + id;
                     document.getElementById('feedback-modal').style.display = 'grid';
                 }
             }
@@ -227,7 +226,7 @@
                 star.style.color = (i < rating) ? 'var(--accent)' : 'var(--border)';
             });
             const radios = document.querySelectorAll('input[name="rating"]');
-            radios[rating-1].checked = true;
+            if (radios[rating-1]) radios[rating-1].checked = true;
         };
 
         document.getElementById('feedback-form').onsubmit = async (e) => {
@@ -235,16 +234,14 @@
             const btn = e.target.querySelector('button[type="submit"]');
             btn.textContent = 'Committing...';
             btn.disabled = true;
-
             const data = {
                 reservation_id: document.getElementById('feedback-reservation-id').value,
                 rating: e.target.querySelector('input[name="rating"]:checked').value,
                 comments: document.getElementById('feedback-comments').value
             };
-
             const res = await api.submitFeedback(data);
             if (res.success) {
-                alert('Sentiment successfully recorded in the database.');
+                alert('Sentiment recorded.');
                 document.getElementById('feedback-modal').style.display = 'none';
                 e.target.reset();
                 window.setRating(0);
@@ -263,7 +260,7 @@
         };
 
         window.cancelReservation = async (id) => {
-            if (confirm('Authorize cancellation of this booking? This will revert room status and cannot be undone.')) {
+            if (confirm('Void this booking?')) {
                 await api.deleteReservation(id);
                 loadData();
             }
@@ -277,7 +274,6 @@
             const btn = e.target.querySelector('button[type="submit"]');
             btn.textContent = 'Processing...';
             btn.disabled = true;
-
             const formData = new FormData(form);
             const data = Object.fromEntries(formData.entries());
             await api.addReservation(data);
@@ -287,12 +283,6 @@
             btn.disabled = false;
             loadData();
         };
-
-        const user = auth.getUser();
-        if (user && user.role !== 'admin') {
-            const al = document.getElementById('admin-link-global');
-            if (al) al.style.display = 'none';
-        }
 
         loadData();
     </script>

@@ -4,18 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Executive Dashboard | Grand Horizon</title>
-    <link rel="stylesheet" href="/public/style.css">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="icon" type="image/svg+xml" href="/logo.svg">
 </head>
 <body>
     <nav>
-        <div class="logo">Grand Horizon</div>
+        <div class="logo"><img src="/logo.svg" alt="Grand Horizon Logo"> Grand Horizon</div>
         <div class="nav-links">
-            <a href="/dashboard" class="active">Overview</a>
-            <a href="/rooms">Management</a>
-            <a href="/reservations">Reservations</a>
-            <a href="/admin" id="admin-link-global">Control Center</a>
-            <a href="/settings">Settings</a>
-            <a href="#" onclick="auth.logout()" style="color: var(--error); opacity: 0.8;">Sign Out</a>
+            <a href="/public/dashboard.html" class="active">Overview</a>
+            <a href="/public/rooms.html">Management</a>
+            <a href="/public/reservations.html">Reservations</a>
+            <a href="/public/admin.html" id="admin-link-global">Control Center</a>
+            <a href="/public/settings.html">Settings</a>
+            <a href="#" id="logout-btn" style="color: var(--error); opacity: 0.8;">Sign Out</a>
         </div>
         <div class="hamburger" id="hamburger">
             <span></span>
@@ -65,7 +66,7 @@
         <div class="animate" style="margin-top: 6rem; transition-delay: 0.5s">
             <div class="justify-between align-center" style="margin-bottom: 2rem;">
                 <h2>Recent Guest Activity</h2>
-                <a href="/reservations" class="secondary" style="font-size: 0.7rem; padding: 0.5rem 1.5rem; text-decoration: none;">View All</a>
+                <a href="/public/reservations.html" class="secondary" style="font-size: 0.7rem; padding: 0.5rem 1.5rem; text-decoration: none;">View All</a>
             </div>
             <div class="table-container">
                 <table id="recent-reservations-table">
@@ -88,35 +89,27 @@
     <footer>
         <div class="footer-grid">
             <div class="footer-brand">
-                <div class="logo">Grand Horizon</div>
+                <div class="logo"><img src="/logo.svg" alt="Grand Horizon Logo"> Grand Horizon</div>
                 <p>Digital Intelligence for Kenya's Premier Hospitality Group.</p>
             </div>
             <div class="footer-links">
                 <h4>System</h4>
                 <ul>
-                    <li><a href="/rooms">Inventory</a></li>
-                    <li><a href="/reservations">Logistics</a></li>
-                    <li><a href="/settings">Security</a></li>
+                    <li><a href="/public/rooms.html">Inventory</a></li>
+                    <li><a href="/public/reservations.html">Logistics</a></li>
+                    <li><a href="/public/settings.html">Security</a></li>
                 </ul>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; <span id="current-year"></span> Grand Horizon. Developed by Ian Kipkoech.</p>
-            <p>2026 Live Operations</p>
+            <p>&copy; 2026 Grand Horizon. Established 2026.</p>
+            <p>Premier Kenyan Hospitality | Live Operations</p>
         </div>
     </footer>
 
     <script src="/app.js"></script>
     <script>
-        document.getElementById('current-year').textContent = new Date().getFullYear();
-
         document.addEventListener('DOMContentLoaded', async () => {
-            const user = auth.getUser();
-            if (user && user.role !== 'admin') {
-                const adminLink = document.getElementById('admin-link-global');
-                if (adminLink) adminLink.style.display = 'none';
-            }
-
             const data = await api.getOverview();
             document.getElementById('total-rooms').textContent = data.rooms.length;
             document.getElementById('active-reservations').textContent = data.reservations.length;

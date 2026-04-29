@@ -4,18 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Control Center | Grand Horizon</title>
-    <link rel="stylesheet" href="/public/style.css">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="icon" type="image/svg+xml" href="/logo.svg">
 </head>
 <body>
     <nav>
-        <div class="logo">Grand Horizon</div>
+        <div class="logo"><img src="/logo.svg" alt="Grand Horizon Logo"> Grand Horizon</div>
         <div class="nav-links">
-            <a href="/dashboard">Overview</a>
-            <a href="/rooms">Management</a>
-            <a href="/reservations">Reservations</a>
-            <a href="/admin" class="active">Control Center</a>
-            <a href="/settings">Settings</a>
-            <a href="#" onclick="auth.logout()" style="color: var(--error); opacity: 0.8;">Sign Out</a>
+            <a href="/public/dashboard.html">Overview</a>
+            <a href="/public/rooms.html">Management</a>
+            <a href="/public/reservations.html">Reservations</a>
+            <a href="/public/admin.html" class="active">Control Center</a>
+            <a href="/public/settings.html">Settings</a>
+            <a href="#" id="logout-btn" style="color: var(--error); opacity: 0.8;">Sign Out</a>
         </div>
         <div class="hamburger" id="hamburger">
             <span></span>
@@ -50,19 +51,18 @@
     <footer>
         <div class="footer-grid">
             <div class="footer-brand">
-                <div class="logo">Grand Horizon</div>
+                <div class="logo"><img src="/logo.svg" alt="Grand Horizon Logo"> Grand Horizon</div>
                 <p>Digital Intelligence for Kenya's Premier Hospitality Group.</p>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; <span id="current-year"></span> Grand Horizon. Developed by Ian Kipkoech.</p>
-            <p>2026 Admin Protocols</p>
+            <p>&copy; 2026 Grand Horizon. Established 2026.</p>
+            <p>Premier Kenyan Hospitality | Live Operations</p>
         </div>
     </footer>
 
     <script src="/app.js"></script>
     <script>
-        document.getElementById('current-year').textContent = new Date().getFullYear();
         const tableBody = document.querySelector('#users-table tbody');
 
         async function loadUsers() {
@@ -98,13 +98,12 @@
         window.updateRole = async (userId, role) => {
             const res = await api.updateUserRole(userId, role);
             if(res.success) {
-                // Flash success state or just reload
                 loadUsers();
             }
         };
 
         window.deleteUser = async (id) => {
-            if (confirm('Permanently revoke this identity from the system? This action cannot be reversed.')) {
+            if (confirm('Permanently revoke this identity?')) {
                 await api.deleteUser(id);
                 loadUsers();
             }

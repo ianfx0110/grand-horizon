@@ -12,7 +12,11 @@ const auth = {
     },
     logout() {
         localStorage.removeItem('ghh_user');
-        window.location.href = '/';
+        // Trigger fade out
+        document.body.classList.add('fade-exit');
+        setTimeout(() => {
+            window.location.href = '/public/index.html';
+        }, 400);
     },
     async login(username, password) {
         const res = await fetch('/api/login', {
@@ -23,6 +27,12 @@ const auth = {
         const data = await res.json();
         if (data.success) {
             this.saveUser(data.user);
+            // Auto redirect
+            const target = data.user.role === 'admin' ? '/public/admin.html' : '/public/dashboard.html';
+            document.body.classList.add('fade-exit');
+            setTimeout(() => {
+                window.location.href = target;
+            }, 400);
         } else {
             throw new Error(data.error);
         }
@@ -35,15 +45,82 @@ const auth = {
             body: JSON.stringify({ username, password })
         });
         const data = await res.json();
-        if (!data.success) {
+        if (data.success) {
+            // Auto login then redirect
+            return this.login(username, password);
+        } else {
             throw new Error(data.error);
         }
-        return data;
     },
     checkAuth() {
-        if (!this.getUser() && !['/', '/login', '/signup'].includes(window.location.pathname)) {
-            window.location.href = '/login';
+        const user = this.getUser();
+        const path = window.location.pathname;
+        const isAuthPage = ['/', '/index.html', '/public/index.html', '/login.html', '/public/login.html', '/signup.html', '/public/signup.html'].includes(path);
+
+        if (!user && !isAuthPage) {
+            window.location.href = '/public/login.html';
+            return;
+        } 
+        
+        if (user && isAuthPage && path !== '/' && path !== '/index.html' && path !== '/public/index.html') {
+            const target = user.role === 'admin' ? '/public/admin.html' : '/public/dashboard.html';
+            window.location.href = target;
         }
+    },
+    
+    initUI() {
+        const user = this.getUser();
+        
+        // Handle Global Admin Link
+        const adminLinks = document.querySelectorAll('#admin-link-global, [href="/admin"]');
+        if (user && user.role !== 'admin') {
+            adminLinks.forEach(el => el.style.display = 'none');
+        }
+
+        // Handle Logout Buttons
+        document.querySelectorAll('#logout-btn, .logout-btn').forEach(btn => {
+            btn.onclick = (e) => {
+                e.preventDefault();
+                this.logout();
+            };
+        });
+
+        // Handle User Displays
+        const userDisplay = document.getElementById('user-name-display');
+        if (userDisplay && user) {
+            userDisplay.textContent = user.username;
+        }
+    },
+
+    initPageTransition() {
+        // Create overlay if not exists
+        if (!document.getElementById('page-overlay')) {
+            const overlay = document.createElement('div');
+            overlay.id = 'page-overlay';
+            overlay.innerHTML = '<div class="loader-bar"></div>';
+            document.body.appendChild(overlay);
+            
+            // Hide after small delay
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+            }, 500);
+        }
+
+        // Intercept all internal links
+        document.addEventListener('click', (e) => {
+            const link = e.target.closest('a');
+            if (link && link.href && link.href.startsWith(window.location.origin) && !link.target && !link.hasAttribute('download')) {
+                const path = link.getAttribute('href');
+                if (path && !path.startsWith('#')) {
+                    e.preventDefault();
+                    document.getElementById('page-overlay').classList.remove('hidden');
+                    document.body.classList.add('fade-exit');
+                    setTimeout(() => {
+                        window.location.href = path;
+                    }, 400);
+                }
+            }
+        });
     }
 };
 
@@ -52,6 +129,8 @@ auth.checkAuth();
 
 // Responsive Navigation Toggle
 document.addEventListener('DOMContentLoaded', () => {
+    auth.initPageTransition();
+    auth.initUI();
     const hamburger = document.getElementById('hamburger');
     const navLinks = document.querySelector('.nav-links');
 

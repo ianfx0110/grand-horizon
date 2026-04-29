@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Join the Legacy | Grand Horizon</title>
-    <link rel="stylesheet" href="/public/style.css">
+    <title>Join the Horizon | Grand Horizon</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="icon" type="image/svg+xml" href="/logo.svg">
     <style>
         body {
             justify-content: center;
@@ -30,8 +31,8 @@
 </head>
 <body>
     <div class="signup-card">
-        <div class="logo"><a href="/">Grand Horizon</a></div>
-        <h2 style="text-align: center; margin-bottom: 1rem; letter-spacing: 1px;">Join the Legacy</h2>
+        <div class="logo"><a href="/public/index.html"><img src="/logo.svg" alt="Grand Horizon Logo"> Grand Horizon</a></div>
+        <h2 style="text-align: center; margin-bottom: 1rem; letter-spacing: 1px;">Join the Horizon</h2>
         <p style="text-align: center; color: var(--text-dim); font-size: 0.9rem; margin-bottom: 3rem;">Begin your journey into authentic Kenyan luxury.</p>
         
         <form id="signup-form">
@@ -48,7 +49,7 @@
 
         <div style="text-align: center; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border);">
             <p style="font-size: 0.85rem; color: var(--text-dim);">
-                Already a member? <a href="/login" style="color: var(--accent); font-weight: 600;">Sign in to Portal</a>
+                Already a member? <a href="/public/login.html" style="color: var(--accent); font-weight: 600;">Sign in to Portal</a>
             </p>
         </div>
     </div>
@@ -62,13 +63,13 @@
             btn.textContent = 'Registering...';
             btn.disabled = true;
 
-            const res = await auth.signup(
-                document.getElementById('username').value,
-                document.getElementById('password').value
-            );
-
-            if (res.error) {
-                alert(res.error);
+            try {
+                await auth.signup(
+                    document.getElementById('username').value,
+                    document.getElementById('password').value
+                );
+            } catch (err) {
+                alert(err.message);
                 btn.textContent = originalText;
                 btn.disabled = false;
             }

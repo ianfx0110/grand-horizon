@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Member Portal | Grand Horizon</title>
-    <link rel="stylesheet" href="/public/style.css">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="icon" type="image/svg+xml" href="/logo.svg">
     <style>
         body {
             justify-content: center;
@@ -30,7 +31,7 @@
 </head>
 <body>
     <div class="login-card">
-        <div class="logo"><a href="/">Grand Horizon</a></div>
+        <div class="logo"><a href="/public/index.html"><img src="/logo.svg" alt="Grand Horizon Logo"> Grand Horizon</a></div>
         <h2 style="text-align: center; margin-bottom: 3rem; letter-spacing: 1px;">Member Portal</h2>
         
         <form id="login-form">
@@ -47,7 +48,7 @@
 
         <div style="text-align: center; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border);">
             <p style="font-size: 0.85rem; color: var(--text-dim);">
-                Not yet a member? <a href="/signup" style="color: var(--accent); font-weight: 600;">Join the Legacy</a>
+                Not yet a member? <a href="/public/signup.html" style="color: var(--accent); font-weight: 600;">Join the Horizon</a>
             </p>
         </div>
     </div>
@@ -61,13 +62,13 @@
             btn.textContent = 'Verifying...';
             btn.disabled = true;
 
-            const res = await auth.login(
-                document.getElementById('username').value,
-                document.getElementById('password').value
-            );
-
-            if (res.error) {
-                alert(res.error);
+            try {
+                await auth.login(
+                    document.getElementById('username').value,
+                    document.getElementById('password').value
+                );
+            } catch (err) {
+                alert(err.message);
                 btn.textContent = originalText;
                 btn.disabled = false;
             }

@@ -1,11 +1,11 @@
 # Grand Horizon Hotel Management System
 By Ian Kipkoech
 
-A sophisticated, full-stack hotel management system built with Vanilla JavaScript, HTML, CSS, Express, and Better-SQLite3.
+A sophisticated, full-stack hotel management system built with Vanilla JavaScript, HTML, CSS, Express, and PostgreSQL.
 
 ## Features
 - **Responsive Multi-page Interface**: Optimized for both desktop and mobile devices.
-- **Sophisticated Dark Theme**: Elegant and modern aesthetic reflecting hotel luxury.
+- **Sophisticated Dark Theme**: Elegant and modern aesthetic reflecting Kenyan luxury standards.
 - **Role-based Authentication**:
   - **Admin**: Full access to management.
   - **Hotel Attendant**: Can manage rooms and reservations.
@@ -16,15 +16,17 @@ A sophisticated, full-stack hotel management system built with Vanilla JavaScrip
 ## Tech Stack
 - **Frontend**: Vanilla HTML5, CSS3, JavaScript (ES6+).
 - **Backend**: Node.js, Express.
-- **Database**: SQLite (via `better-sqlite3`).
-- **Styling**: Pure CSS with CSS Variables.
+- **Database**: PostgreSQL (via `pg`).
+- **Styling**: Tailwind CSS & Pure CSS variables.
 
 ## Setup
 1. Standard Node.js environment required.
-2. Default user provided: `admin` / `admin123`.
-3. New staff can register as Attendants directly from the Signup page.
+2. **Database Configuration**: This application requires a PostgreSQL database. Set the `DATABASE_URL` environment variable to your connection string (e.g., `postgres://user:pass@host:port/db`).
+3. Default user provided: `admin` / `admin123`.
+4. New staff can register as Attendants directly from the Signup page.
 
 ## Project Structure
-- `/public`: Frontend assets (HTML, CSS, JS).
-- `/server.js`: Express server and Database initialization.
-- `/hotel.db`: SQLite database file (generated on first run).
+- `/public`: Frontend assets (HTML, JS).
+- `/server.js`: Express server and PostgreSQL pool logic.
+- `/schema.sql`: Database schema and initial seed data.
+- `/src/index.css`: Tailwind configuration and global styles.
