@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings | Grand Horizon</title>
+    <link rel="stylesheet" href="/public/style.css">
+</head>
+<body>
+    <nav>
+        <div class="logo">Grand Horizon</div>
+        <div class="nav-links">
+            <a href="/dashboard">Overview</a>
+            <a href="/rooms">Management</a>
+            <a href="/reservations">Reservations</a>
+            <a href="/admin" id="admin-link">Control Center</a>
+            <a href="/settings" class="active">Settings</a>
+            <a href="#" onclick="auth.logout()" style="color: var(--error); opacity: 0.8;">Sign Out</a>
+        </div>
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <main>
+        <div class="animate">
+            <p style="text-transform: uppercase; letter-spacing: 2px; color: var(--accent); font-size: 0.7rem; font-weight: 600; margin-bottom: 0.5rem;">User Configuration</p>
+            <h1>Personal Identity</h1>
+        </div>
+        
+        <div class="grid mt-8">
+            <div class="card animate" style="transition-delay: 0.1s">
+                <h2 style="margin-bottom: 2.5rem;">Account Intelligence</h2>
+                <div class="form-group">
+                    <label>Profile Identity (Username)</label>
+                    <input type="text" id="username-display" readonly style="background: rgba(255,255,255,0.02);">
+                </div>
+                <div class="form-group">
+                    <label>System Authorization Level</label>
+                    <input type="text" id="role-display" readonly style="color: var(--accent); font-weight: 700; background: rgba(255,255,255,0.02); letter-spacing: 1px;">
+                </div>
+            </div>
+
+            <div class="card animate" style="transition-delay: 0.2s">
+                <h2 style="margin-bottom: 2.5rem;">Interface Protocols</h2>
+                <div class="form-group">
+                    <label>Digital Dialect</label>
+                    <select disabled style="background: rgba(255,255,255,0.02);">
+                        <option>English Elite (Global)</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-top: 2rem;">
+                    <label>Operational Alerts</label>
+                    <div class="flex align-center gap-4" style="padding: 1rem; border: 1px solid var(--border); border-radius: 4px;">
+                        <input type="checkbox" checked style="width: auto; height: 18px; width: 18px;">
+                        <span style="font-size: 0.9rem; color: var(--text-dim);">Receive encrypted email transmission for every new booking.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <div class="logo">Grand Horizon</div>
+                <p>Digital Intelligence for Kenya's Premier Hospitality Group.</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; <span id="current-year"></span> Grand Horizon. Developed by Ian Kipkoech.</p>
+            <p>2026 Live Operations</p>
+        </div>
+    </footer>
+
+    <script src="/app.js"></script>
+    <script>
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = auth.getUser();
+            if (user) {
+                document.getElementById('username-display').value = user.username.toUpperCase();
+                document.getElementById('role-display').value = user.role.toUpperCase() + ' LEVEL ACCESS';
+                
+                if (user.role !== 'admin') {
+                    const adminLink = document.getElementById('admin-link');
+                    if (adminLink) adminLink.style.display = 'none';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

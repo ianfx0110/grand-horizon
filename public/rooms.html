@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room Management | Grand Horizon</title>
+    <link rel="stylesheet" href="/public/style.css">
+</head>
+<body>
+    <nav>
+        <div class="logo">Grand Horizon</div>
+        <div class="nav-links">
+            <a href="/dashboard">Overview</a>
+            <a href="/rooms" class="active">Management</a>
+            <a href="/reservations">Reservations</a>
+            <a href="/admin" id="admin-link-global">Control Center</a>
+            <a href="/settings">Settings</a>
+            <a href="#" onclick="auth.logout()" style="color: var(--error); opacity: 0.8;">Sign Out</a>
+        </div>
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <main>
+        <div class="animate flex justify-between align-center">
+            <div>
+                <p style="text-transform: uppercase; letter-spacing: 2px; color: var(--accent); font-size: 0.7rem; font-weight: 600; margin-bottom: 0.5rem;">Inventory Control</p>
+                <h1>Accommodation Portfolio</h1>
+            </div>
+            <button id="add-room-btn" style="padding: 1rem 2rem;">+ Create New Asset</button>
+        </div>
+
+        <div class="flex gap-4 mt-6 animate" id="filters" style="transition-delay: 0.2s">
+            <button class="secondary active-filter" onclick="filterRooms('all', this)" style="border-radius: 100px; padding: 0.6rem 1.5rem;">All Inventory</button>
+            <button class="secondary" onclick="filterRooms('available', this)" style="border-radius: 100px; padding: 0.6rem 1.5rem;">Available</button>
+            <button class="secondary" onclick="filterRooms('occupied', this)" style="border-radius: 100px; padding: 0.6rem 1.5rem;">Occupied</button>
+            <button class="secondary" onclick="filterRooms('maintenance', this)" style="border-radius: 100px; padding: 0.6rem 1.5rem;">Maintenance</button>
+        </div>
+
+        <div id="room-list" class="grid mt-8 animate" style="transition-delay: 0.3s">
+            <!-- Loaded via JS -->
+        </div>
+
+        <!-- Room Gallery Modal -->
+        <div id="gallery-modal" style="display: none; position: fixed; inset: 0; background: var(--glass); backdrop-filter: blur(25px); z-index: 1100; place-items: center; padding: 2rem;">
+            <div class="card animate" style="width: 100%; max-width: 1000px; padding: 3rem;">
+                <h2 id="gallery-title" style="margin-bottom: 2rem;">Sanctuary Gallery</h2>
+                <div id="gallery-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1.5rem; max-height: 500px; overflow-y: auto; padding-right: 1rem;">
+                    <!-- Images loaded via JS -->
+                </div>
+                <button type="button" onclick="document.getElementById('gallery-modal').style.display='none'" class="secondary mt-8" style="width: 100%;">Close Gallery</button>
+            </div>
+        </div>
+
+        <!-- Room Reservations Modal -->
+        <div id="room-res-modal" style="display: none; position: fixed; inset: 0; background: var(--glass); backdrop-filter: blur(15px); z-index: 1000; place-items: center; padding: 2rem;">
+            <div class="card animate" style="width: 100%; max-width: 800px; padding: 4rem;">
+                <h2 id="room-res-title" style="margin-bottom: 3rem;">Room Historical Data</h2>
+                <div class="table-container">
+                    <table id="room-res-table">
+                        <thead>
+                            <tr>
+                                <th>Guest Identity</th>
+                                <th>Booking Interval</th>
+                                <th>Audit Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Loaded via JS -->
+                        </tbody>
+                    </table>
+                </div>
+                <button type="button" onclick="document.getElementById('room-res-modal').style.display='none'" class="secondary mt-6" style="width: 100%;">Close Audit View</button>
+            </div>
+        </div>
+
+        <!-- Add Room Modal -->
+        <div id="room-modal" style="display: none; position: fixed; inset: 0; background: var(--glass); backdrop-filter: blur(15px); z-index: 1000; place-items: center;">
+            <div class="card animate" style="width: 100%; max-width: 550px; padding: 4rem;">
+                <h2 style="margin-bottom: 2.5rem;">Onboard New Asset</h2>
+                <form id="add-room-form">
+                    <div class="form-group">
+                        <label>Asset Identification (Room Number)</label>
+                        <input type="text" name="number" required placeholder="e.g. 104">
+                    </div>
+                    <div class="form-group">
+                        <label>Classification Architecture</label>
+                        <select name="type">
+                            <option value="Single">Elite Single</option>
+                            <option value="Double">Royal Double</option>
+                            <option value="Suite">Savanna Suite</option>
+                            <option value="Deluxe">Horizon Deluxe</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Nightly Valuation (USD)</label>
+                        <input type="number" name="price" required placeholder="250">
+                    </div>
+                    <div class="flex gap-4" style="margin-top: 3rem;">
+                        <button type="submit" style="flex: 1;">Deploy Asset</button>
+                        <button type="button" id="close-modal" class="secondary" style="flex: 1;">Abort</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <div class="logo">Grand Horizon</div>
+                <p>Digital Intelligence for Kenya's Premier Hospitality Group.</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; <span id="current-year"></span> Grand Horizon. Developed by Ian Kipkoech.</p>
+            <p>2026 Live Operations</p>
+        </div>
+    </footer>
+
+    <script src="/app.js"></script>
+    <script>
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+        const roomList = document.getElementById('room-list');
+        const modal = document.getElementById('room-modal');
+        const addBtn = document.getElementById('add-room-btn');
+        const closeBtn = document.getElementById('close-modal');
+        const form = document.getElementById('add-room-form');
+        let allRooms = [];
+
+        async function loadRooms() {
+            allRooms = await api.getRooms();
+            renderRooms(allRooms);
+        }
+
+        function renderRooms(rooms) {
+            roomList.innerHTML = '';
+            rooms.forEach(room => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.style.padding = '0';
+                card.style.overflow = 'hidden';
+                const statusClass = room.status.toLowerCase();
+                
+                // Mapping room types to high-quality images for the card
+                const imgs = {
+                    'Single': 'https://images.unsplash.com/photo-1590490359683-658d3d23f972?auto=format&fit=crop&q=80&w=600',
+                    'Double': 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&q=80&w=600',
+                    'Suite': 'https://images.unsplash.com/photo-1578683010236-d716f9a3f261?auto=format&fit=crop&q=80&w=600',
+                    'Deluxe': 'https://images.unsplash.com/photo-1591088398332-8a7701f7284b?auto=format&fit=crop&q=80&w=600'
+                };
+
+                const galleryPhotos = {
+                    'Single': [
+                        'https://images.unsplash.com/photo-1590490359683-658d3d23f972?auto=format&fit=crop&q=80&w=800',
+                        'https://images.unsplash.com/photo-1505691938895-1758d7eaa511?auto=format&fit=crop&q=80&w=800',
+                        'https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?auto=format&fit=crop&q=80&w=800'
+                    ],
+                    'Double': [
+                        'https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&q=80&w=800',
+                        'https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&q=80&w=800',
+                        'https://images.unsplash.com/photo-1598928506311-c55ded91a20c?auto=format&fit=crop&q=80&w=800'
+                    ],
+                    'Suite': [
+                        'https://images.unsplash.com/photo-1578683010236-d716f9a3f261?auto=format&fit=crop&q=80&w=800',
+                        'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=800',
+                        'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&q=80&w=800',
+                        'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&q=80&w=800'
+                    ],
+                    'Deluxe': [
+                        'https://images.unsplash.com/photo-1591088398332-8a7701f7284b?auto=format&fit=crop&q=80&w=800',
+                        'https://images.unsplash.com/photo-1566117760636-643ff2b27c17?auto=format&fit=crop&q=80&w=800',
+                        'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?auto=format&fit=crop&q=80&w=800'
+                    ]
+                };
+
+                const roomImgs = galleryPhotos[room.type] || galleryPhotos['Single'];
+
+                card.innerHTML = `
+                    <div style="height: 250px; width: 100%; overflow: hidden; position: relative;" id="carousel-${room.id}">
+                        <div class="carousel-container" style="display: flex; height: 100%; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);">
+                            ${roomImgs.map(img => `<img src="${img}" style="width: 100%; flex-shrink: 0; object-fit: cover;">`).join('')}
+                        </div>
+                        <span class="status-tag status-${statusClass}" style="position: absolute; top: 1rem; right: 1rem; backdrop-filter: blur(10px); background: rgba(0,0,0,0.5); z-index: 10;">${room.status}</span>
+                        
+                        <div class="carousel-nav" style="position: absolute; inset: 0; display: flex; justify-content: space-between; align-items: center; padding: 0 1rem; opacity: 0; transition: 0.3s; z-index: 5;">
+                            <button onclick="moveCarousel(${room.id}, -1)" style="background: rgba(0,0,0,0.4); border: none; color: white; width: 30px; height: 30px; border-radius: 50%; cursor: pointer;">←</button>
+                            <button onclick="moveCarousel(${room.id}, 1)" style="background: rgba(0,0,0,0.4); border: none; color: white; width: 30px; height: 30px; border-radius: 50%; cursor: pointer;">→</button>
+                        </div>
+                        
+                        <div style="position: absolute; bottom: 1rem; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index:10;">
+                             ${roomImgs.map((_, i) => `<div class="carousel-dot-${room.id}" style="width: 6px; height: 6px; border-radius: 50%; background: ${i === 0 ? 'var(--accent)' : 'rgba(255,255,255,0.4)'}; transition: 0.3s;"></div>`).join('')}
+                        </div>
+                    </div>
+                    <div style="padding: 2.5rem;">
+                        <div class="justify-between align-center" style="margin-bottom: 1.5rem;">
+                            <h3 style="font-size: 1.4rem; font-weight: 700;">Room ${room.number}</h3>
+                            <span class="stat-label" style="background: var(--border); padding: 0.2rem 0.6rem; border-radius: 4px;">${room.type}</span>
+                        </div>
+                        <div class="stat-value" style="font-size: 1.8rem; font-weight: 400; margin-bottom: 2rem;">
+                            $$${room.price}<span style="font-size: 0.8rem; color: var(--text-dim); margin-left: 0.5rem;">per night</span>
+                        </div>
+                        <div class="flex gap-2 flex-wrap">
+                            <button class="secondary" style="flex: 1; padding: 0.6rem; font-size: 0.75rem; min-width: 100px;" onclick="viewRoomReservations(${room.id}, '${room.number}')">Audit History</button>
+                            <button class="secondary" style="flex: 1; padding: 0.6rem; font-size: 0.75rem; min-width: 100px; border-color: var(--accent); color: var(--accent);" onclick="openGallery('${room.type}')">Full Gallery</button>
+                            <button class="danger" style="flex: 1; padding: 0.6rem; font-size: 0.75rem; min-width: 100px;" onclick="deleteRoom(${room.id})">Decommission</button>
+                        </div>
+                    </div>
+                `;
+                roomList.appendChild(card);
+                
+                // Add hover listeners for controls
+                const carouselEl = document.getElementById(`carousel-${room.id}`);
+                carouselEl.onmouseenter = () => carouselEl.querySelector('.carousel-nav').style.opacity = '1';
+                carouselEl.onmouseleave = () => carouselEl.querySelector('.carousel-nav').style.opacity = '0';
+            });
+        }
+
+        const carouselStates = {};
+        window.moveCarousel = (roomId, direction) => {
+            if (!carouselStates[roomId]) carouselStates[roomId] = 0;
+            const container = document.querySelector(`#carousel-${roomId} .carousel-container`);
+            const dots = document.querySelectorAll(`.carousel-dot-${roomId}`);
+            const total = container.children.length;
+            
+            carouselStates[roomId] = (carouselStates[roomId] + direction + total) % total;
+            
+            container.style.transform = `translateX(-${carouselStates[roomId] * 100}%)`;
+            dots.forEach((dot, i) => {
+                dot.style.background = (i === carouselStates[roomId]) ? 'var(--accent)' : 'rgba(255,255,255,0.4)';
+            });
+        };
+
+                // Add helper for gallery
+                window.openGallery = (type) => {
+                    const grid = document.getElementById('gallery-grid');
+                    const title = document.getElementById('gallery-title');
+                    title.textContent = `${type} Luxury Showcase`;
+                    grid.innerHTML = '';
+                    (galleryPhotos[type] || galleryPhotos['Single']).forEach(src => {
+                        const img = document.createElement('img');
+                        img.src = src;
+                        img.style.width = '100%';
+                        img.style.height = '200px';
+                        img.style.objectFit = 'cover';
+                        img.style.borderRadius = '4px';
+                        img.style.cursor = 'zoom-in';
+                        img.onclick = () => window.open(src, '_blank');
+                        grid.appendChild(img);
+                    });
+                    document.getElementById('gallery-modal').style.display = 'grid';
+                };
+            });
+        }
+
+        window.filterRooms = (status, btn) => {
+            document.querySelectorAll('#filters button').forEach(b => b.classList.remove('active-filter'));
+            btn.classList.add('active-filter');
+            
+            if (status === 'all') {
+                renderRooms(allRooms);
+            } else {
+                const filtered = allRooms.filter(r => r.status.toLowerCase() === status);
+                renderRooms(filtered);
+            }
+        };
+
+        window.viewRoomReservations = async (roomId, roomNumber) => {
+            const tableBody = document.querySelector('#room-res-table tbody');
+            document.getElementById('room-res-title').textContent = `Audit Log: Room ${roomNumber}`;
+            tableBody.innerHTML = '<tr><td colspan="3" style="text-align: center;">Retrieving records...</td></tr>';
+            document.getElementById('room-res-modal').style.display = 'grid';
+
+            const res = await api.getRoomReservations(roomId);
+            tableBody.innerHTML = '';
+            if (res.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: var(--text-dim); padding: 4rem;">No historical records found for this asset.</td></tr>';
+            } else {
+                res.forEach(r => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>
+                            <div style="font-weight:600">${r.guest_name}</div>
+                            <div style="font-size:0.75rem; color: var(--text-dim)">${r.guest_email}</div>
+                        </td>
+                        <td style="font-size:0.85rem">${r.check_in} — ${r.check_out}</td>
+                        <td><span class="status-tag status-${r.status.toLowerCase()}">${r.status}</span></td>
+                    `;
+                    tableBody.appendChild(tr);
+                });
+            }
+        };
+
+        window.deleteRoom = async (id) => {
+            if (confirm('Initiate decommissioning procedure? This asset will be permanently removed from inventory if no active obligations exist.')) {
+                const res = await api.deleteRoom(id);
+                if (res.error) {
+                    alert(res.error);
+                } else {
+                    loadRooms();
+                }
+            }
+        };
+
+        addBtn.onclick = () => modal.style.display = 'grid';
+        closeBtn.onclick = () => modal.style.display = 'none';
+
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.textContent = 'Deploying...';
+            btn.disabled = true;
+            
+            await api.addRoom(data);
+            modal.style.display = 'none';
+            form.reset();
+            btn.textContent = 'Deploy Asset';
+            btn.disabled = false;
+            loadRooms();
+        };
+
+        const user = auth.getUser();
+        if (user && user.role !== 'admin') {
+            const al = document.getElementById('admin-link-global');
+            if (al) al.style.display = 'none';
+        }
+
+        loadRooms();
+    </script>
+</body>
+</html>

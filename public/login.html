@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Member Portal | Grand Horizon</title>
+    <link rel="stylesheet" href="/public/style.css">
+    <style>
+        body {
+            justify-content: center;
+            align-items: center;
+            display: flex;
+            background: linear-gradient(rgba(22, 18, 15, 0.8), rgba(22, 18, 15, 0.95)), url('https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=1200');
+            background-size: cover;
+            background-position: center;
+        }
+        .login-card {
+            width: 100%;
+            max-width: 450px;
+            padding: 4rem;
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            animation: fadeIn 1s ease-out;
+        }
+        .logo { margin-bottom: 3rem; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <div class="logo"><a href="/">Grand Horizon</a></div>
+        <h2 style="text-align: center; margin-bottom: 3rem; letter-spacing: 1px;">Member Portal</h2>
+        
+        <form id="login-form">
+            <div class="form-group">
+                <label>Access Identity (Username)</label>
+                <input type="text" id="username" placeholder="Your username" required>
+            </div>
+            <div class="form-group">
+                <label>Security Key (Password)</label>
+                <input type="password" id="password" placeholder="••••••••" required>
+            </div>
+            <button type="submit" style="width: 100%; margin-top: 1rem;">Authenticate</button>
+        </form>
+
+        <div style="text-align: center; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border);">
+            <p style="font-size: 0.85rem; color: var(--text-dim);">
+                Not yet a member? <a href="/signup" style="color: var(--accent); font-weight: 600;">Join the Legacy</a>
+            </p>
+        </div>
+    </div>
+    
+    <script src="/app.js"></script>
+    <script>
+        document.getElementById('login-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const originalText = btn.textContent;
+            btn.textContent = 'Verifying...';
+            btn.disabled = true;
+
+            const res = await auth.login(
+                document.getElementById('username').value,
+                document.getElementById('password').value
+            );
+
+            if (res.error) {
+                alert(res.error);
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        };
+    </script>
+</body>
+</html>

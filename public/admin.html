@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control Center | Grand Horizon</title>
+    <link rel="stylesheet" href="/public/style.css">
+</head>
+<body>
+    <nav>
+        <div class="logo">Grand Horizon</div>
+        <div class="nav-links">
+            <a href="/dashboard">Overview</a>
+            <a href="/rooms">Management</a>
+            <a href="/reservations">Reservations</a>
+            <a href="/admin" class="active">Control Center</a>
+            <a href="/settings">Settings</a>
+            <a href="#" onclick="auth.logout()" style="color: var(--error); opacity: 0.8;">Sign Out</a>
+        </div>
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <main>
+        <div class="animate">
+            <p style="text-transform: uppercase; letter-spacing: 2px; color: var(--accent); font-size: 0.7rem; font-weight: 600; margin-bottom: 0.5rem;">System Governance</p>
+            <h1>Staff & Privilege Matrix</h1>
+            <p style="color: var(--text-dim); max-width: 600px; margin-bottom: 3rem;">Manage authorization levels and personnel access across the Grand Horizon digital ecosystem.</p>
+        </div>
+
+        <div class="table-container animate" style="transition-delay: 0.2s">
+            <table id="users-table">
+                <thead>
+                    <tr>
+                        <th>Identity Profile</th>
+                        <th>Privilege Level</th>
+                        <th>Operational Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Loaded via JS -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <div class="logo">Grand Horizon</div>
+                <p>Digital Intelligence for Kenya's Premier Hospitality Group.</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; <span id="current-year"></span> Grand Horizon. Developed by Ian Kipkoech.</p>
+            <p>2026 Admin Protocols</p>
+        </div>
+    </footer>
+
+    <script src="/app.js"></script>
+    <script>
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+        const tableBody = document.querySelector('#users-table tbody');
+
+        async function loadUsers() {
+            const user = auth.getUser();
+            if (user?.role !== 'admin') {
+                window.location.href = '/dashboard';
+                return;
+            }
+
+            const users = await api.getUsers();
+            tableBody.innerHTML = '';
+            users.forEach(u => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        <div style="font-weight: 600; font-size: 1.1rem;">${u.username}</div>
+                        <div style="font-size: 0.7rem; color: var(--text-dim); margin-top: 0.2rem; text-transform: uppercase; letter-spacing: 1px;">Internal UID: #${u.id}</div>
+                    </td>
+                    <td>
+                        <select onchange="updateRole(${u.id}, this.value)" style="width: auto; padding: 0.4rem 1rem; font-size: 0.8rem; background: rgba(255,255,255,0.05); border-radius: 4px;">
+                            <option value="booker" ${u.role === 'booker' ? 'selected' : ''}>Elite Booker</option>
+                            <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>System Admin</option>
+                        </select>
+                    </td>
+                    <td>
+                        ${u.username !== 'admin' ? `<button class="danger" style="padding: 0.5rem 1.2rem; font-size: 0.7rem;" onclick="deleteUser(${u.id})">Revoke Access</button>` : '<span style="font-size: 0.7rem; color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Root Authority</span>'}
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        window.updateRole = async (userId, role) => {
+            const res = await api.updateUserRole(userId, role);
+            if(res.success) {
+                // Flash success state or just reload
+                loadUsers();
+            }
+        };
+
+        window.deleteUser = async (id) => {
+            if (confirm('Permanently revoke this identity from the system? This action cannot be reversed.')) {
+                await api.deleteUser(id);
+                loadUsers();
+            }
+        };
+
+        loadUsers();
+    </script>
+</body>
+</html>

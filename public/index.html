@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grand Horizon | Luxury Kenyan Hospitality</title>
+    <link rel="stylesheet" href="/public/style.css">
+</head>
+<body>
+    <nav>
+        <div class="logo">Grand Horizon</div>
+        <div class="nav-links" id="guest-nav">
+            <a href="/">Home</a>
+            <a href="/login" id="login-link">Member Portal</a>
+            <a href="/signup" class="btn-primary" style="padding: 0.6rem 1.5rem;">Join the Legacy</a>
+        </div>
+        <div class="nav-links" id="auth-nav" style="display: none;">
+            <a href="/dashboard">Executive Dashboard</a>
+            <a href="#" id="logout-btn" style="color: var(--error);">Sign Out</a>
+        </div>
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <div class="animate">
+            <p style="text-transform: uppercase; letter-spacing: 4px; font-weight: 600; font-size: 0.7rem; margin-bottom: 2rem; color: var(--accent);">Since 1926 • Heritage & Grace</p>
+            <h1>Where the Savanna<br>Meets the Stars</h1>
+            <p>Experience Grand Horizon: A century-old sanctuary of Kenyan hospitality, refined for the modern soul.</p>
+            <div style="margin-top: 3.5rem; display: flex; gap: 2rem; justify-content: center;">
+                <a href="/signup" class="btn-primary">Reserve Your Stay</a>
+                <a href="#heritage" class="secondary" style="padding: 1rem 2.5rem; border: 1px solid var(--accent); color: var(--accent); border-radius: 4px; text-transform: uppercase; font-size: 0.8rem; font-weight: 700; letter-spacing: 2px; text-decoration: none;">Our Story</a>
+            </div>
+        </div>
+    </div>
+
+    <main style="padding: 0; max-width: 100%;">
+        <!-- Heritage Section -->
+        <section id="heritage" style="padding: 12rem 2rem; background-color: var(--bg-deep);">
+            <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 8rem; align-items: center;">
+                <div class="animate">
+                    <h4 style="color: var(--accent); margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 3px; font-size: 0.8rem; font-weight: 600;">The Horizon Legacy</h4>
+                    <h2 style="font-size: 4rem; margin-bottom: 2.5rem; line-height: 1.1;">A Rhythm of<br>Centuries</h2>
+                    <p style="color: var(--text-dim); font-size: 1.15rem; line-height: 2.2; margin-bottom: 4rem;">Founded in the golden age of the Rift Valley, Grand Horizon was built on a simple promise: to honor the vast, untamed beauty of Kenya while providing an unparalleled standard of grace. Today, we continue that journey, blending the earth-toned traditions of the Maasai with the crisp, silent luxury of modern design.</p>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;">
+                        <div>
+                            <h3 style="font-size: 3rem; color: var(--accent); margin-bottom: 0.5rem;">100+</h3>
+                            <p style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-dim); font-weight: 600;">Years of Excellence</p>
+                        </div>
+                        <div>
+                            <h3 style="font-size: 3rem; color: var(--accent); margin-bottom: 0.5rem;">50k</h3>
+                            <p style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-dim); font-weight: 600;">Guest Stories</p>
+                        </div>
+                    </div>
+                </div>
+                <div style="position: relative;" class="animate">
+                    <div style="position: absolute; width: 100%; height: 100%; border: 1px solid var(--accent); top: 40px; left: 40px; z-index: 0; opacity: 0.3;"></div>
+                    <img src="https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&q=80&w=800" alt="Safari Heritage" style="width: 100%; display: block; position: relative; z-index: 1; border-radius: 4px; box-shadow: var(--shadow);">
+                </div>
+            </div>
+        </section>
+
+        <!-- Experience Grid -->
+        <section style="padding: 12rem 2rem; background-color: var(--bg-card);">
+            <div style="max-width: 1200px; margin: 0 auto; text-align: center; margin-bottom: 8rem;">
+                <h2 style="font-size: 3.5rem; margin-bottom: 2rem;">The Art of Living</h2>
+                <p style="color: var(--text-dim); max-width: 650px; margin: 0 auto; font-size: 1.1rem; line-height: 1.8;">From the highlands to the coast, discover a world where every detail is curated for your revitalization and connection to the land.</p>
+            </div>
+            <div class="grid" style="max-width: 1200px; margin: 0 auto;">
+                <div class="card" style="padding: 0; background: none; border: none; box-shadow: none;">
+                    <div style="overflow: hidden; border-radius: 4px; margin-bottom: 2.5rem;">
+                        <img src="https://images.unsplash.com/photo-1551882547-ff43c63efa17?auto=format&fit=crop&q=80&w=600" style="width: 100%; height: 450px; object-fit: cover; transition: var(--transition);" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                    </div>
+                    <h3 style="font-size: 1.8rem; margin-bottom: 1.5rem;">Sanctuary Suites</h3>
+                    <p style="color: var(--text-dim); font-size: 1rem; line-height: 1.8;">Modern minimalism infused with warm African textures. Your private, silent window into the wild heart of the savanna.</p>
+                </div>
+                <div class="card" style="padding: 0; background: none; border: none; box-shadow: none;">
+                    <div style="overflow: hidden; border-radius: 4px; margin-bottom: 2.5rem;">
+                        <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=600" style="width: 100%; height: 450px; object-fit: cover; transition: var(--transition);" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                    </div>
+                    <h3 style="font-size: 1.8rem; margin-bottom: 1.5rem;">Culinary Heritage</h3>
+                    <p style="color: var(--text-dim); font-size: 1rem; line-height: 1.8;">A sensory expedition through Kenyan flavors. Farm-to-table dining experiences overlooking the eternal Mara horizon.</p>
+                </div>
+                <div class="card" style="padding: 0; background: none; border: none; box-shadow: none;">
+                    <div style="overflow: hidden; border-radius: 4px; margin-bottom: 2.5rem;">
+                        <img src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&q=80&w=600" style="width: 100%; height: 450px; object-fit: cover; transition: var(--transition);" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                    </div>
+                    <h3 style="font-size: 1.8rem; margin-bottom: 1.5rem;">Oasis Wellness</h3>
+                    <p style="color: var(--text-dim); font-size: 1rem; line-height: 1.8;">Restorative therapies inspired by ancient healing rituals and the natural rhythm of the land. Total silence, total peace.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Promotion Banner -->
+        <section style="padding: 10rem 2rem; background: linear-gradient(rgba(188, 108, 37, 0.05), transparent);">
+            <div style="max-width: 1100px; margin: 0 auto; text-align: center; border: 1px solid var(--border); padding: 7rem 3rem; position: relative; background: var(--bg-card); box-shadow: var(--shadow);">
+                <div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: var(--accent); padding: 0.4rem 2rem; color: var(--bg-deep); text-transform: uppercase; letter-spacing: 4px; font-size: 0.75rem; font-weight: 700; border-radius: 100px;">Exclusive 2026 Privilege</div>
+                <h2 style="font-size: 4rem; margin-bottom: 2.5rem;">The Madaraka Season</h2>
+                <p style="color: var(--text-dim); font-size: 1.3rem; margin-bottom: 4rem; max-width: 750px; margin-left: auto; margin-right: auto; line-height: 1.8;">Celebrate Kenya's heritage with an extraordinary retreat. Enjoy a <strong>40% privilege discount</strong> on all highland stays throughout the month of June.</p>
+                <a href="/signup" class="btn-primary" style="padding: 1.2rem 3.5rem;">Secure My Privilege</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <div class="logo">Grand Horizon</div>
+                <p style="line-height: 2;">Guardian of African luxury since 1926. We believe hospitality is a sacred rhythm of service, elegance, and deep-rooted heritage.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Experience</h4>
+                <ul>
+                    <li><a href="#">The Suites</a></li>
+                    <li><a href="#">The Dining</a></li>
+                    <li><a href="#">The Safari</a></li>
+                    <li><a href="#">The Gallery</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Privileges</h4>
+                <ul>
+                    <li><a href="#">Membership</a></li>
+                    <li><a href="#">Event Spaces</a></li>
+                    <li><a href="#">Concierge</a></li>
+                    <li><a href="#">Gift Cards</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Concierge</h4>
+                <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 1.5rem;">+254 700 000 000</p>
+                <p style="color: var(--text-dim); font-size: 0.9rem;">concierge@grandhorizon.ke</p>
+                <div style="margin-top: 2rem; display: flex; gap: 1.5rem;">
+                    <a href="#" style="font-size: 1.2rem;">𝕏</a>
+                    <a href="#" style="font-size: 1.2rem;"></a>
+                    <a href="#" style="font-size: 1.2rem;"></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; <span id="current-year"></span> Grand Horizon Luxury Hotel. All rights reserved.</p>
+            <p style="letter-spacing: 2px;">KENYA • AFRICA • THE WORLD</p>
+        </div>
+    </footer>
+
+    <script src="/app.js"></script>
+    <script>
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = auth.getUser();
+            if (user) {
+                document.getElementById('guest-nav').style.display = 'none';
+                document.getElementById('auth-nav').style.display = 'flex';
+                document.getElementById('logout-btn').onclick = (e) => {
+                    e.preventDefault();
+                    auth.logout();
+                };
+            }
+        });
+    </script>
+</body>
+</html>
