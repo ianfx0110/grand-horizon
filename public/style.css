@@ -28,6 +28,10 @@ html {
   scroll-behavior: smooth;
 }
 
+a {
+  text-decoration: none;
+}
+
 body {
   font-family: var(--font-sans);
   background-color: var(--bg-deep);
@@ -237,7 +241,7 @@ button.secondary:hover {
 }
 
 /* Forms */
-.form-group { margin-bottom: 2rem; }
+.form-group { margin-bottom: 2rem; position: relative; }
 label {
   display: block;
   font-size: 0.7rem;
@@ -246,6 +250,101 @@ label {
   color: var(--text-dim);
   margin-bottom: 0.75rem;
   font-weight: 600;
+}
+
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 1.25rem;
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--text-dim);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+
+.toggle-password:hover {
+    color: var(--accent);
+    transform: none;
+}
+
+.back-button {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: var(--transition);
+    text-decoration: none;
+    font-size: 1.2rem;
+    z-index: 10;
+}
+
+.back-button:hover {
+    background: var(--error);
+    color: white;
+    border-color: var(--error);
+    transform: rotate(90deg);
+}
+
+/* Auth Cards */
+.login-card, .signup-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 3.5rem;
+    width: 100%;
+    max-width: 500px;
+    margin: 8rem auto;
+    box-shadow: var(--shadow);
+    position: relative;
+    animation: fadeIn 1s var(--transition) forwards;
+}
+
+/* WhatsApp Floating Button */
+.whatsapp-float {
+    position: fixed;
+    bottom: 2rem;
+    left: 2rem;
+    background-color: #25d366;
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    transition: var(--transition);
+}
+
+.whatsapp-float:hover {
+    transform: scale(1.1) translateY(-5px);
+    background-color: #128c7e;
+    color: white;
+}
+
+.whatsapp-float svg {
+    width: 32px;
+    height: 32px;
 }
 
 input, select, textarea {

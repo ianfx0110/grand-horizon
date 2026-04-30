@@ -1,0 +1,143 @@
+<%- include('partials/header') %>
+
+<main>
+    <div class="animate flex justify-between align-center">
+        <div>
+            <p style="text-transform: uppercase; letter-spacing: 2px; color: var(--accent); font-size: 0.7rem; font-weight: 600; margin-bottom: 0.5rem;">Logistics Flow</p>
+            <h1>Stay Manifest</h1>
+        </div>
+        <button id="book-btn">Initiate New Stay</button>
+    </div>
+
+    <div class="card mt-8 animate">
+        <div class="table-container">
+            <table id="reservations-table">
+                <thead>
+                    <tr>
+                        <th>Guest Reference</th>
+                        <th>Accommodation</th>
+                        <th>Stay Duration</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Loaded via JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<!-- Booking Modal -->
+<div id="booking-modal" class="modal">
+    <div class="modal-content animate">
+        <h2>Initiate Stay</h2>
+        <form id="booking-form">
+            <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div class="form-group">
+                    <label>Guest Identity (Name)</label>
+                    <input type="text" id="guest-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Communication ID (Email)</label>
+                    <input type="email" id="guest-email" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Accommodation Unit</label>
+                <select id="res-room-id" required></select>
+            </div>
+            <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div class="form-group">
+                    <label>Inception (Check-in)</label>
+                    <input type="date" id="check-in" required>
+                </div>
+                <div class="form-group">
+                    <label>Conclusion (Check-out)</label>
+                    <input type="date" id="check-out" required>
+                </div>
+            </div>
+            <div class="flex gap-4" style="margin-top: 3rem;">
+                <button type="submit">Verify & Initiate</button>
+                <button type="button" class="secondary" onclick="this.closest('.modal').classList.remove('active')">Abort</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        const table = document.querySelector('#reservations-table tbody');
+        const roomSelect = document.getElementById('res-room-id');
+
+        const loadContent = async () => {
+            const [rooms, reservations] = await Promise.all([
+                api.getRooms(),
+                api.getReservations()
+            ]);
+
+            // Fill rooms select
+            roomSelect.innerHTML = '<option value="">Select Unit</option>';
+            rooms.filter(r => r.status === 'available').forEach(r => {
+                const opt = document.createElement('option');
+                opt.value = r.id;
+                opt.textContent = `Room ${r.number} (${r.type})`;
+                roomSelect.appendChild(opt);
+            });
+
+            // Fill table
+            table.innerHTML = '';
+            reservations.forEach(res => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        <div style="font-weight:600">${res.guest_name}</div>
+                        <div style="font-size:0.75rem; color:var(--text-dim)">${res.guest_email}</div>
+                    </td>
+                    <td>Room ${res.room_number}</td>
+                    <td style="font-size:0.85rem">${res.check_in} — ${res.check_out}</td>
+                    <td><span class="status-tag status-${res.status.toLowerCase()}">${res.status}</span></td>
+                    <td>
+                        <div class="flex gap-2">
+                             <button onclick="handleStatus('${res.id}', 'confirmed')" class="secondary" style="padding:0.4rem 0.8rem; font-size:0.65rem">Confirm</button>
+                             <button onclick="handleDelete('${res.id}')" class="error-btn" style="padding:0.4rem 0.8rem; font-size:0.65rem">Void</button>
+                        </div>
+                    </td>
+                `;
+                table.appendChild(tr);
+            });
+        };
+
+        window.handleStatus = async (id, status) => {
+            await api.updateReservationStatus(id, status);
+            loadContent();
+        };
+
+        window.handleDelete = async (id) => {
+            if (confirm('Void this stay cycle?')) {
+                await api.deleteReservation(id);
+                loadContent();
+            }
+        };
+
+        document.getElementById('book-btn').onclick = () => document.getElementById('booking-modal').classList.add('active');
+
+        document.getElementById('booking-form').onsubmit = async (e) => {
+            e.preventDefault();
+            await api.addReservation({
+                room_id: document.getElementById('res-room-id').value,
+                guest_name: document.getElementById('guest-name').value,
+                guest_email: document.getElementById('guest-email').value,
+                check_in: document.getElementById('check-in').value,
+                check_out: document.getElementById('check-out').value
+            });
+            document.getElementById('booking-modal').classList.remove('active');
+            loadContent();
+        };
+
+        loadContent();
+    });
+</script>
+
+<%- include('partials/footer') %>

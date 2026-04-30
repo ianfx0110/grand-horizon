@@ -1,0 +1,55 @@
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <div class="logo"><img src="/logo.svg" alt="Eldohub Logo"> Eldohub</div>
+                <p style="line-height: 2;">Kenya's premier hub for tech education and academic excellence. Empowering the next generation of innovators.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Academics</h4>
+                <ul>
+                    <li><a href="/courses">Course Catalog</a></li>
+                    <li><a href="/students">Student Registry</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Portals</h4>
+                <ul>
+                    <li><a href="/newstudent">New Enrollment</a></li>
+                    <li><a href="/newcourse">Launch Course</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Contact</h4>
+                <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 1.5rem;">+254 115 481 162</p>
+                <p style="color: var(--text-dim); font-size: 0.9rem;">ianfx0110@gmail.com</p>
+                <div style="margin-top: 2rem; display: flex; gap: 1.5rem;">
+                    <a href="#" style="font-size: 1.2rem;">𝕏</a>
+                    <a href="#" style="font-size: 1.2rem;"></a>
+                    <a href="#" style="font-size: 1.2rem;"></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; <%= new Date().getFullYear() %> Eldohub. Established 2026.</p>
+            <p style="letter-spacing: 2px;">KENYA • INNOVATION • EXCELLENCE</p>
+        </div>
+    </footer>
+
+    <a href="https://wa.me/254115481162" class="whatsapp-float" target="_blank" title="Chat on WhatsApp">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-circle"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
+    </a>
+
+    <script src="/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+             const logoutBtn = document.getElementById('logout-btn');
+             if (logoutBtn) {
+                 logoutBtn.onclick = (e) => {
+                     e.preventDefault();
+                     auth.logout();
+                 };
+             }
+        });
+    </script>
+</body>
+</html>

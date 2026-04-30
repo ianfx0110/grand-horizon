@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> | Eldohub</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="icon" type="image/svg+xml" href="/logo.svg">
+    <style>
+        nav a { text-decoration: none !important; }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo"><a href="/"><img src="/logo.svg" alt="Eldohub Logo"> Eldohub</a></div>
+        <div class="nav-links" style="display: flex;">
+            <a href="/students">Students</a>
+            <a href="/courses">Courses</a>
+            <a href="/newstudent" class="btn-primary" style="padding: 0.6rem 1.5rem; margin-left: 1rem;">Enroll Now</a>
+        </div>
+        <div class="nav-links" id="auth-nav" style="<%= user ? 'display: flex' : 'display: none' %>">
+            <a href="/dashboard">Executive Dashboard</a>
+            <button id="logout-btn" style="color: var(--error); background: none; border: none; cursor: pointer; font-family: inherit; font-size: inherit;">Sign Out</button>
+        </div>
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>

@@ -15,7 +15,7 @@ const auth = {
         // Trigger fade out
         document.body.classList.add('fade-exit');
         setTimeout(() => {
-            window.location.href = '/public/index.html';
+            window.location.href = '/';
         }, 400);
     },
     async login(username, password) {
@@ -28,7 +28,7 @@ const auth = {
         if (data.success) {
             this.saveUser(data.user);
             // Auto redirect
-            const target = data.user.role === 'admin' ? '/public/admin.html' : '/public/dashboard.html';
+            const target = data.user.role === 'admin' ? '/admin' : '/dashboard';
             document.body.classList.add('fade-exit');
             setTimeout(() => {
                 window.location.href = target;
@@ -55,15 +55,15 @@ const auth = {
     checkAuth() {
         const user = this.getUser();
         const path = window.location.pathname;
-        const isAuthPage = ['/', '/index.html', '/public/index.html', '/login.html', '/public/login.html', '/signup.html', '/public/signup.html'].includes(path);
+        const isAuthPage = ['/', '/login', '/signup'].includes(path);
 
         if (!user && !isAuthPage) {
-            window.location.href = '/public/login.html';
+            window.location.href = '/login';
             return;
         } 
         
-        if (user && isAuthPage && path !== '/' && path !== '/index.html' && path !== '/public/index.html') {
-            const target = user.role === 'admin' ? '/public/admin.html' : '/public/dashboard.html';
+        if (user && isAuthPage && path !== '/') {
+            const target = user.role === 'admin' ? '/admin' : '/dashboard';
             window.location.href = target;
         }
     },
