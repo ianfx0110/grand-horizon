@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Room | Admin</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="icon" type="image/svg+xml" href="/logo.svg">
+</head>
+<body>
+    <div class="app-wrapper">
+        <nav class="nav-container">
+            <div class="logo">
+                <a href="/">
+                    <img src="/logo.svg" alt="Grand Horizon Logo">
+                    <span>Grand Horizon</span>
+                </a>
+            </div>
+            <button class="menu-toggle" id="menu-btn">☰</button>
+            <div class="nav-links" id="nav-content">
+                <!-- Dynamic Nav -->
+            </div>
+        </nav>
+
+        <main>
+            <div class="form-card">
+                <h2 style="color: var(--gold); font-family: var(--font-serif); text-align: center; margin-bottom: 2rem;">Register New Wing</h2>
+                <form id="new-room-form">
+                    <div class="form-group">
+                        <label>Room Number</label>
+                        <input type="text" name="room_number" placeholder="e.g. 101" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Room Type / Suite Class</label>
+                        <select name="type_id" id="type-select" required>
+                            <option value="">Fetching suite types...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Floor</label>
+                        <input type="number" name="floor" min="0" max="50" placeholder="1" required>
+                    </div>
+                    <button type="submit" class="btn-primary" style="width: 100%;">Authorize Registry</button>
+                    <p id="form-feedback" style="text-align: center; margin-top: 1rem; font-size: 0.8rem; display: none;"></p>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script src="/nav.js"></script>
+    <script>
+        async function loadTypes() {
+            try {
+                const res = await fetch('/api/admin/room-types');
+                const types = await res.json();
+                const select = document.getElementById('type-select');
+                select.innerHTML = '<option value="" disabled selected>Select class</option>';
+                select.innerHTML += types.map(t => `<option value="${t.type_id}">${t.name} (KES ${Math.round(t.base_price)})</option>`).join('');
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        document.getElementById('new-room-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fd = new FormData(e.target);
+            const data = Object.fromEntries(fd.entries());
+            const feedback = document.getElementById('form-feedback');
+
+            try {
+                const res = await fetch('/api/admin/rooms', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (res.ok) {
+                    feedback.textContent = 'Room registered successfully.';
+                    feedback.style.color = 'var(--gold)';
+                    feedback.style.display = 'block';
+                    setTimeout(() => window.location.href = '/admin/rooms.html', 1500);
+                } else {
+                    const err = await res.json();
+                    feedback.textContent = 'Registration failed: ' + (err.error || 'Check inputs');
+                    feedback.style.color = '#ff4d4d';
+                    feedback.style.display = 'block';
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        });
+
+        loadTypes();
+    </script>
+</body>
+</html>

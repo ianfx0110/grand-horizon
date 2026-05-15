@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grand Horizon | Elite Shuttle & Safaris</title>
+    <link rel="stylesheet" href="/public/style.css">
+    <link rel="icon" type="image/svg+xml" href="/public/logo.svg">
+</head>
+<body>
+    <div class="app-wrapper">
+        <nav class="nav-container">
+            <div class="logo">
+                <a href="/">
+                    <img src="public/logo.svg" alt="Grand Horizon Logo">
+                    <span>Grand Horizon</span>
+                </a>
+            </div>
+            <button class="menu-toggle" id="menu-btn">☰</button>
+            <div class="nav-links" id="nav-content">
+                <!-- Links dynamically loaded by nav.js -->
+            </div>
+        </nav>
+
+        <main>
+            <section class="hero">
+                <h1>The Gold Standard of Travel</h1>
+                <p>Experience Kenya's landscapes in unparalleled luxury. From business shuttles to custom safaris, we redefine the journey.</p>
+                <div style="display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;">
+                    <a href="/booker/index.html" class="btn-primary">Reserve Your Seat</a>
+                    <a href="/about.html" class="btn-primary" style="background: transparent; border: 1px solid var(--gold); color: var(--gold);">Our Heritage</a>
+                </div>
+            </section>
+
+            <section style="padding: 4rem 0;">
+                <div class="grid">
+                    <div class="card">
+                        <h3 style="color: var(--gold); margin-bottom: 1rem;">Elite Shuttle</h3>
+                        <p style="color: var(--text-dim); font-size: 0.9rem;">Regular executive departures between Nairobi, Eldoret, and Nakuru.</p>
+                    </div>
+                    <div class="card">
+                        <h3 style="color: var(--gold); margin-bottom: 1rem;">Custom Safaris</h3>
+                        <p style="color: var(--text-dim); font-size: 0.9rem;">Bespoke tours to Maasai Mara, Amboseli, and beyond with professional guides.</p>
+                    </div>
+                    <div class="card">
+                        <h3 style="color: var(--gold); margin-bottom: 1rem;">Exclusive Hire</h3>
+                        <p style="color: var(--text-dim); font-size: 0.9rem;">Private luxury vehicle hire for business delegations and special events.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="inquiry" style="padding: 6rem 0;">
+                <div class="form-card">
+                    <h2 style="text-align: center; color: var(--gold); margin-bottom: 2rem; font-family: var(--font-serif);">Direct WhatsApp Inquiry</h2>
+                    <form id="landing-wa-form">
+                        <div class="form-group">
+                            <label>Destination / Interest</label>
+                            <input type="text" name="interest" placeholder="e.g. Nairobi to Eldoret / Maasai Mara Safari" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Your Name</label>
+                            <input type="text" name="name" placeholder="John Doe" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Preferred Date</label>
+                            <input type="date" name="date" required>
+                        </div>
+                        <button type="submit" class="btn-primary" style="width: 100%;">Connect on WhatsApp</button>
+                    </form>
+                </div>
+            </section>
+        </main>
+
+        <footer style="padding: 4rem 2rem; border-top: 1px solid var(--border); text-align: center; color: var(--text-dim); background: rgba(0,0,0,0.2);">
+            <p>&copy; 2026 Grand Horizon Elite Shuttles. All Rights Reserved.</p>
+        </footer>
+    </div>
+
+    <script src="/nav.js"></script>
+    <script>
+        document.getElementById('landing-wa-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const fd = new FormData(e.target);
+            const msg = `Greetings Grand Horizon! I am ${fd.get('name')}. I am interested in *${fd.get('interest')}* for the date of ${fd.get('date')}. Please provide booking details.`;
+            window.open(`https://wa.me/254115481162?text=${encodeURIComponent(msg)}`, '_blank');
+        });
+    </script>
+</body>
+</html>

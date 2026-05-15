@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQs | Grand Horizon Hotel</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="icon" type="image/svg+xml" href="/logo.svg">
+    <style>
+        .faq-item {
+            margin-bottom: 3rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 2rem;
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .faq-item h3 {
+            color: var(--gold);
+            font-family: var(--font-serif);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        .faq-item p {
+            color: var(--text-dim);
+            line-height: 1.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-wrapper">
+        <nav class="nav-container">
+            <div class="logo">
+                <a href="/">
+                    <img src="/logo.svg" alt="Grand Horizon Logo">
+                    <span>Grand Horizon</span>
+                </a>
+            </div>
+            <button class="menu-toggle" id="menu-btn">☰</button>
+            <div class="nav-links" id="nav-content">
+                <!-- Dynamic Nav -->
+            </div>
+        </nav>
+
+        <main>
+            <div style="text-align: center; margin-bottom: 6rem;">
+                <h1 style="color: var(--gold); font-family: var(--font-serif); font-size: 3.5rem;">Guest Information</h1>
+                <p style="color: var(--text-dim); font-size: 1.1rem; max-width: 600px; margin: 1rem auto;">Frequently asked questions about your upcoming stay at Grand Horizon Hotel & Resort.</p>
+            </div>
+            
+            <div style="max-width: 900px; margin: 0 auto; padding-bottom: 10rem;">
+                <div class="faq-item">
+                    <h3>What are the check-in and check-out times?</h3>
+                    <p>Standard check-in begins at 2:00 PM. Check-out is expected by 11:00 AM on your day of departure. Early arrivals and late departures can be arranged through our concierge, subject to availability.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>Is airport transportation provided?</h3>
+                    <p>Yes, we offer complimentary luxury shuttle service for guests staying in our Presidential and Executive suites. For other guests, private transfers can be arranged for a nominal fee.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>Are pets allowed at the resort?</h3>
+                    <p>While we love all creatures, Grand Horizon maintains a pet-free environment to ensure the comfort and tranquility of all our guests, with the exception of certified service animals.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>Do the rooms have high-speed internet?</h3>
+                    <p>Absolutely. Every wing of our hotel is equipped with enterprise-grade fiber optic WiFi, available to all guests at no additional charge.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>What is your cancellation policy?</h3>
+                    <p>Reservations cancelled more than 48 hours before the arrival date are eligible for a full refund. Cancellations made within 48 hours will incur a one-night stay charge.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>Is there a dress code for the signature restaurants?</h3>
+                    <p>We recommend 'Smart Casual' for our evening dining venues. We invite you to embrace the elegance of the evening while remaining comfortable.</p>
+                </div>
+            </div>
+        </main>
+
+        <footer style="padding: 4rem 2rem; border-top: 1px solid var(--border); text-align: center; background: rgba(0,0,0,0.2);">
+            <p style="color: var(--text-dim);">&copy; 2026 Grand Horizon Hotel & Resort. All Rights Reserved.</p>
+        </footer>
+    </div>
+
+    <script src="/nav.js"></script>
+</body>
+</html>

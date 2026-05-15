@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guest Manifest | Grand Horizon</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="icon" type="image/svg+xml" href="/logo.svg">
+</head>
+<body>
+    <div class="app-wrapper">
+        <nav class="nav-container">
+            <div class="logo">
+                <a href="/">
+                    <img src="/logo.svg" alt="Grand Horizon Logo">
+                    <span>Grand Horizon</span>
+                </a>
+            </div>
+            <button class="menu-toggle" id="menu-btn">☰</button>
+            <div class="nav-links" id="nav-content">
+                <!-- Dynamic Nav -->
+            </div>
+        </nav>
+
+        <main>
+            <div style="margin-bottom: 4rem;">
+                <h1 style="font-family: var(--font-serif); color: var(--gold);">Guest Manifest</h1>
+                <p style="color: var(--text-dim);">Digital registry of your distinguished guests.</p>
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;">
+                <input type="text" id="manifest-search" placeholder="Search by name, email or room..." style="flex: 1; min-width: 250px;">
+                <select id="status-filter" style="width: 200px;">
+                    <option value="all">All Statuses</option>
+                    <option value="confirmed">Confirmed</option>
+                    <option value="checked_in">Checked In</option>
+                    <option value="checked_out">Checked Out</option>
+                    <option value="cancelled">Cancelled</option>
+                </select>
+            </div>
+
+            <div class="table-container">
+                <table id="bookings-table">
+                    <thead>
+                        <tr>
+                            <th>Guest</th>
+                            <th>Wing / Room</th>
+                            <th>Check-in</th>
+                            <th>Check-out</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bookings-list">
+                        <tr>
+                            <td colspan="5" style="text-align: center;">Synchronizing guest data...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script src="/nav.js"></script>
+    <script>
+        let allBookings = [];
+
+        async function loadBookings() {
+            try {
+                const res = await fetch('/api/admin/bookings');
+                if (!res.ok) {
+                    if (res.status === 401) window.location.href = '/login.html';
+                    return;
+                }
+                allBookings = await res.json();
+                renderBookings(allBookings);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function renderBookings(bookings) {
+            const tbody = document.getElementById('bookings-list');
+
+            if (bookings.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No reservations found matching your query.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = bookings.map(b => `
+                <tr>
+                    <td style="font-weight: 600;">${b.client_name}<br><small style="color: var(--text-dim);">${b.client_email}</small></td>
+                    <td style="color: var(--gold); font-weight: 700;">${b.room_type}<br><small>Room ${b.room_number}</small></td>
+                    <td>${new Date(b.check_in).toLocaleDateString()}</td>
+                    <td>${new Date(b.check_out).toLocaleDateString()}</td>
+                    <td><span style="padding: 0.2rem 0.6rem; border: 1px solid var(--border); border-radius: 40px; font-size: 0.7rem; text-transform: uppercase;">${b.status}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        // Search & Filter
+        const searchInput = document.getElementById('manifest-search');
+        const statusFilter = document.getElementById('status-filter');
+
+        function handleFilter() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const status = statusFilter.value;
+
+            const filtered = allBookings.filter(b => {
+                const matchesSearch = b.client_name.toLowerCase().includes(searchTerm) || 
+                                     b.client_email.toLowerCase().includes(searchTerm) || 
+                                     b.room_number.toLowerCase().includes(searchTerm);
+                const matchesStatus = status === 'all' || b.status === status;
+                return matchesSearch && matchesStatus;
+            });
+
+            renderBookings(filtered);
+        }
+
+        searchInput.addEventListener('input', handleFilter);
+        statusFilter.addEventListener('change', handleFilter);
+
+        loadBookings();
+    </script>
+</body>
+</html>

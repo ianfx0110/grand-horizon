@@ -1,93 +1,73 @@
--- Grand Horizon Hotel Management System
--- Schema & Kenyan Heritage Seed Data (PostgreSQL)
+-- Grand Horizon Hotel & Resort Management System
+-- MySQL Schema
 
--- Users Table (Staff & Admins)
-CREATE TABLE IF NOT EXISTS users (
-    id SERIAL PRIMARY KEY,
-    username TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL,
-    role TEXT DEFAULT 'staff' -- 'admin', 'staff', 'booker'
+CREATE DATABASE IF NOT EXISTS GrandHorizonHotel;
+USE GrandHorizonHotel;
+
+CREATE TABLE IF NOT EXISTS room_types (
+    type_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    base_price DECIMAL(10, 2) NOT NULL,
+    capacity INT NOT NULL,
+    amenities TEXT -- JSON or comma separated string
 );
 
--- Rooms Table
 CREATE TABLE IF NOT EXISTS rooms (
-    id SERIAL PRIMARY KEY,
-    number TEXT UNIQUE NOT NULL,
-    type TEXT NOT NULL,
-    price REAL NOT NULL,
-    status TEXT DEFAULT 'available' -- 'available', 'occupied', 'maintenance'
+    room_number VARCHAR(20) PRIMARY KEY,
+    type_id INT,
+    floor INT,
+    status ENUM('available', 'occupied', 'maintenance', 'out_of_order') DEFAULT 'available',
+    img_url VARCHAR(255),
+    FOREIGN KEY (type_id) REFERENCES room_types(type_id)
 );
 
--- Guests Table
-CREATE TABLE IF NOT EXISTS guests (
-    id SERIAL PRIMARY KEY,
-    name TEXT NOT NULL,
-    email TEXT UNIQUE NOT NULL,
-    phone TEXT
-);
-
--- Reservations Table
-CREATE TABLE IF NOT EXISTS reservations (
-    id SERIAL PRIMARY KEY,
-    room_id INTEGER NOT NULL,
-    guest_id INTEGER NOT NULL,
+CREATE TABLE IF NOT EXISTS bookings (
+    booking_id INT AUTO_INCREMENT PRIMARY KEY,
+    room_number VARCHAR(20),
+    client_name VARCHAR(100) NOT NULL,
+    client_email VARCHAR(100) NOT NULL,
+    client_phone VARCHAR(20),
     check_in DATE NOT NULL,
     check_out DATE NOT NULL,
-    status TEXT DEFAULT 'confirmed', -- 'confirmed', 'cancelled', 'completed'
-    CONSTRAINT fk_room FOREIGN KEY (room_id) REFERENCES rooms(id),
-    CONSTRAINT fk_guest FOREIGN KEY (guest_id) REFERENCES guests(id)
-);
-
--- Feedback Table
-CREATE TABLE IF NOT EXISTS feedback (
-    id SERIAL PRIMARY KEY,
-    reservation_id INTEGER NOT NULL,
-    rating INTEGER NOT NULL,
-    comments TEXT,
+    total_price DECIMAL(10, 2),
+    status ENUM('confirmed', 'checked_in', 'checked_out', 'cancelled') DEFAULT 'confirmed',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_reservation FOREIGN KEY (reservation_id) REFERENCES reservations(id)
+    FOREIGN KEY (room_number) REFERENCES rooms(room_number)
 );
 
--- SEED DATA
--- Default Identities
-INSERT INTO users (username, password, role) VALUES 
-('admin', 'admin123', 'admin'),
-('mwangi_staff', 'staff123', 'staff'),
-('akinyi_staff', 'staff123', 'staff')
-ON CONFLICT (username) DO NOTHING;
+CREATE TABLE IF NOT EXISTS inquiries (
+    inquiry_id INT AUTO_INCREMENT PRIMARY KEY,
+    full_name VARCHAR(100) NOT NULL,
+    email VARCHAR(100),
+    subject VARCHAR(255),
+    message TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
--- Accommodation Portfolio (Kenyan Themed)
-INSERT INTO rooms (number, type, price, status) VALUES 
-('101', 'Single', 120, 'available'),
-('102', 'Double', 200, 'occupied'),
-('103', 'Double', 200, 'available'),
-('201', 'Suite', 450, 'available'),
-('202', 'Suite', 450, 'occupied'),
-('203', 'Deluxe', 350, 'available'),
-('301', 'Penthouse', 1200, 'available'),
-('302', 'Deluxe', 350, 'maintenance'),
-('401', 'Single', 120, 'available'),
-('402', 'Double', 200, 'available')
-ON CONFLICT (number) DO NOTHING;
+CREATE TABLE IF NOT EXISTS admin_users (
+    admin_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    role ENUM('admin', 'staff') DEFAULT 'staff',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
--- Guest Manifest (Authentic Kenyan Identities)
-INSERT INTO guests (name, email, phone) VALUES 
-('Jomo Mwangi', 'jomo.m@horizon.ke', '+254 712 345678'),
-('Amani Otieno', 'amani.o@horizon.ke', '+254 722 345678'),
-('Faith Wanjiku', 'faith.w@horizon.ke', '+254 733 345678'),
-('David Kamau', 'david.k@horizon.ke', '+254 744 345678'),
-('Sarah Onyango', 'sarah.o@horizon.ke', '+254 755 345678'),
-('Joseph Njeri', 'joseph.n@horizon.ke', '+254 766 345678'),
-('Eliud Kipchoge', 'eliud.k@horizon.ke', '+254 777 345678'),
-('Mercy Mutua', 'mercy.m@horizon.ke', '+254 788 345678'),
-('Beatrice Adhiambo', 'beatrice.a@horizon.ke', '+254 799 345678'),
-('Ali Hassan', 'ali.h@horizon.ke', '+254 700 345678')
-ON CONFLICT (email) DO NOTHING;
+-- Default admin user
+INSERT IGNORE INTO admin_users(username, password_hash, role) 
+VALUES ('ian', '$2b$10$ZDvqg98GZ2HnMEnyznQ3UuA4Z8R62jZgkxlNwfWXU5Jb1zIu9EUhW', 'admin');
 
--- Historical Log (Seed Reservations for 2026)
-INSERT INTO reservations (room_id, guest_id, check_in, check_out, status) VALUES 
-(1, 1, '2026-05-01', '2026-05-05', 'confirmed'),
-(2, 2, '2026-04-28', '2026-05-02', 'confirmed'),
-(3, 3, '2026-05-10', '2026-05-15', 'confirmed'),
-(4, 4, '2026-05-12', '2026-05-18', 'confirmed'),
-(5, 5, '2026-04-25', '2026-04-30', 'completed');
+-- Seed Room Types
+INSERT IGNORE INTO room_types (name, description, base_price, capacity, amenities) VALUES
+('Maasai Mara Executive Suite', 'A tribute to the majestic plains. Features hand-carved mahogany furniture, a private terrace overlooking the valley, and authentic Maasai textiles.', 18000.00, 2, 'High-Speed WiFi, Mini-bar, Valley View, Rain Shower, King Bed'),
+('Lamu Coastal Sanctuary', 'Brings the serenity of the Indian Ocean inland. Swahili-inspired architecture with ivory accents and a spacious sunlit lounge.', 14500.00, 1, 'WiFi, Working Desk, AC, Luxury Bathtub, Queen Bed'),
+('Great Rift Valley Presidential Wing', 'Peak luxury at the horizon. Includes two master bedrooms, private dining room with a dedicated chef, and a 360-degree observation deck.', 55000.00, 4, 'WiFi, Private Chef, 24/7 Butler, Private Pool, Observation Deck'),
+('Amboseli Garden Villa', 'Tucked away in our botanical gardens. Features a private garden path and windows that frame the morning sun.', 12000.00, 2, 'WiFi, Private Garden, AC, Coffee Station');
+
+-- Seed Rooms
+INSERT IGNORE INTO rooms (room_number, type_id, floor, status) VALUES
+('M101', 1, 1, 'available'),
+('M102', 1, 1, 'available'),
+('L201', 2, 2, 'available'),
+('R301', 3, 3, 'available'),
+('A001', 4, 0, 'available');

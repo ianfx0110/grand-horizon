@@ -3,76 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Member Portal | Grand Horizon</title>
+    <title>Staff Access | Grand Horizon</title>
     <link rel="stylesheet" href="/style.css">
     <link rel="icon" type="image/svg+xml" href="/logo.svg">
-    <style>
-        body {
-            justify-content: center;
-            align-items: center;
-            display: flex;
-            background: linear-gradient(rgba(22, 18, 15, 0.8), rgba(22, 18, 15, 0.95)), url('https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=1200');
-            background-size: cover;
-            background-position: center;
-        }
-        .login-card {
-            width: 100%;
-            max-width: 450px;
-            padding: 4rem;
-            background: var(--glass);
-            backdrop-filter: blur(25px);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            box-shadow: var(--shadow);
-            animation: fadeIn 1s ease-out;
-        }
-        .logo { margin-bottom: 3rem; text-align: center; }
-    </style>
 </head>
 <body>
-    <div class="login-card">
-        <div class="logo"><a href="/public/index.html"><img src="/logo.svg" alt="Grand Horizon Logo"> Grand Horizon</a></div>
-        <h2 style="text-align: center; margin-bottom: 3rem; letter-spacing: 1px;">Member Portal</h2>
-        
-        <form id="login-form">
-            <div class="form-group">
-                <label>Access Identity (Username)</label>
-                <input type="text" id="username" placeholder="Your username" required>
+    <div class="app-wrapper">
+        <nav class="nav-container">
+            <div class="logo">
+                <a href="/">
+                    <img src="/logo.svg" alt="Grand Horizon Logo">
+                    <span>Grand Horizon</span>
+                </a>
             </div>
-            <div class="form-group">
-                <label>Security Key (Password)</label>
-                <input type="password" id="password" placeholder="••••••••" required>
+            <button class="menu-toggle" id="menu-btn">☰</button>
+            <div class="nav-links" id="nav-content">
+                <!-- Links dynamically loaded by nav.js -->
             </div>
-            <button type="submit" style="width: 100%; margin-top: 1rem;">Authenticate</button>
-        </form>
+        </nav>
 
-        <div style="text-align: center; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border);">
-            <p style="font-size: 0.85rem; color: var(--text-dim);">
-                Not yet a member? <a href="/public/signup.html" style="color: var(--accent); font-weight: 600;">Join the Horizon</a>
-            </p>
-        </div>
+        <main style="display: flex; justify-content: center; align-items: center; min-height: calc(100vh - var(--top-nav-height));">
+            <div class="form-card" style="width: 100%; max-width: 450px;">
+                <h2 style="text-align: center; color: var(--gold); margin-bottom: 2rem; font-family: var(--font-serif);">Hotel Command Center</h2>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label>Registry Username</label>
+                        <input type="text" id="username" placeholder="e.g. ian" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Credential Key</label>
+                        <div style="position: relative;">
+                            <input type="password" id="password" placeholder="••••••••" required>
+                            <button type="button" id="toggle-password" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--gold); cursor: pointer; font-size: 0.8rem;">Show</button>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-primary" style="width: 100%;">Establish Connection</button>
+                </form>
+                <p id="error-msg" style="color: #ff4d4d; text-align: center; margin-top: 1rem; font-size: 0.85rem; display: none;"></p>
+            </div>
+        </main>
     </div>
-    
-    <script src="/app.js"></script>
+
+    <script src="/nav.js"></script>
     <script>
-        document.getElementById('login-form').onsubmit = async (e) => {
+        const passInput = document.getElementById('password');
+        const passToggle = document.getElementById('toggle-password');
+
+        passToggle.addEventListener('click', () => {
+            const type = passInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passInput.setAttribute('type', type);
+            passToggle.textContent = type === 'password' ? 'Show' : 'Hide';
+        });
+
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = e.target.querySelector('button');
-            const originalText = btn.textContent;
-            btn.textContent = 'Verifying...';
-            btn.disabled = true;
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorEl = document.getElementById('error-msg');
 
             try {
-                await auth.login(
-                    document.getElementById('username').value,
-                    document.getElementById('password').value
-                );
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                if (res.ok) {
+                    window.location.href = '/staff/dashboard.html';
+                } else {
+                    const data = await res.json();
+                    errorEl.textContent = data.error || 'Authentication failed';
+                    errorEl.style.display = 'block';
+                }
             } catch (err) {
-                alert(err.message);
-                btn.textContent = originalText;
-                btn.disabled = false;
+                errorEl.textContent = 'Network error. Try again.';
+                errorEl.style.display = 'block';
             }
-        };
+        });
+
+        // Check if already logged in
+        async function checkSession() {
+            const res = await fetch('/api/me');
+            if (res.ok) window.location.href = '/staff/dashboard.html';
+        }
+        checkSession();
     </script>
 </body>
 </html>

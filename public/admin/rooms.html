@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room Management | Admin</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="icon" type="image/svg+xml" href="/logo.svg">
+</head>
+<body>
+    <div class="app-wrapper">
+        <nav class="nav-container">
+            <div class="logo">
+                <a href="/">
+                    <img src="/logo.svg" alt="Grand Horizon Logo">
+                    <span>Grand Horizon</span>
+                </a>
+            </div>
+            <button class="menu-toggle" id="menu-btn">☰</button>
+            <div class="nav-links" id="nav-content">
+                <!-- Dynamic Nav -->
+            </div>
+        </nav>
+
+        <main>
+            <div style="margin-bottom: 4rem;">
+                <h1 style="font-family: var(--font-serif); color: var(--gold);">Inventory Control</h1>
+                <p style="color: var(--text-dim);">Live management of hotel suites and wings.</p>
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;">
+                <input type="text" id="inventory-search" placeholder="Search by room # or type..." style="flex: 1; min-width: 250px;">
+                <select id="status-filter" style="width: 200px;">
+                    <option value="all">All Statuses</option>
+                    <option value="available">Available</option>
+                    <option value="occupied">Occupied</option>
+                    <option value="maintenance">Maintenance</option>
+                </select>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Room #</th>
+                            <th>Type</th>
+                            <th>Floor</th>
+                            <th>Price / Night</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rooms-list">
+                        <tr>
+                            <td colspan="5" style="text-align: center;">Scanning central registry...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script src="/nav.js"></script>
+    <script>
+        let allRooms = [];
+
+        async function loadRooms() {
+            try {
+                const res = await fetch('/api/admin/rooms');
+                if (!res.ok) return;
+                allRooms = await res.json();
+                renderRooms(allRooms);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function renderRooms(rooms) {
+            const tbody = document.getElementById('rooms-list');
+
+            if (rooms.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No rooms matching the criteria.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = rooms.map(r => `
+                <tr>
+                    <td style="color: var(--gold); font-weight: 700;">${r.room_number}</td>
+                    <td style="font-weight: 600;">${r.type_name}</td>
+                    <td>${r.floor}</td>
+                    <td>KES ${Math.round(r.base_price).toLocaleString()}</td>
+                    <td><span style="font-size: 0.75rem; border: 1px solid var(--border); padding: 0.2rem 0.6rem; border-radius: 40px; color: ${r.status === 'available' ? 'var(--gold)' : '#ff4d4d'}">${r.status.toUpperCase()}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        // Search & Filter
+        const searchInput = document.getElementById('inventory-search');
+        const statusFilter = document.getElementById('status-filter');
+
+        function handleFilter() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const status = statusFilter.value;
+
+            const filtered = allRooms.filter(r => {
+                const matchesSearch = r.room_number.toLowerCase().includes(searchTerm) || 
+                                     r.type_name.toLowerCase().includes(searchTerm);
+                const matchesStatus = status === 'all' || r.status === status;
+                return matchesSearch && matchesStatus;
+            });
+
+            renderRooms(filtered);
+        }
+
+        searchInput.addEventListener('input', handleFilter);
+        statusFilter.addEventListener('change', handleFilter);
+
+        loadRooms();
+    </script>
+</body>
+</html>

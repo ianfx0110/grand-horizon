@@ -1,263 +1,114 @@
 /**
- * Shared API and Auth utility for Grand Horizon Hotel Management
+ * Grand Horizon Hotel - Core Application Logic (DOM JS)
+ * Handles dynamic content injection and micro-interactions
  */
 
-const auth = {
-    saveUser(user) {
-        localStorage.setItem('ghh_user', JSON.stringify(user));
-    },
-    getUser() {
-        const user = localStorage.getItem('ghh_user');
-        return user ? JSON.parse(user) : null;
-    },
-    logout() {
-        localStorage.removeItem('ghh_user');
-        // Trigger fade out
-        document.body.classList.add('fade-exit');
-        setTimeout(() => {
-            window.location.href = '/';
-        }, 400);
-    },
-    async login(username, password) {
-        const res = await fetch('/api/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password })
-        });
-        const data = await res.json();
-        if (data.success) {
-            this.saveUser(data.user);
-            // Auto redirect
-            const target = data.user.role === 'admin' ? '/admin' : '/dashboard';
-            document.body.classList.add('fade-exit');
-            setTimeout(() => {
-                window.location.href = target;
-            }, 400);
-        } else {
-            throw new Error(data.error);
-        }
-        return data;
-    },
-    async signup(username, password) {
-        const res = await fetch('/api/signup', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password })
-        });
-        const data = await res.json();
-        if (data.success) {
-            // Auto login then redirect
-            return this.login(username, password);
-        } else {
-            throw new Error(data.error);
-        }
-    },
-    checkAuth() {
-        const user = this.getUser();
-        const path = window.location.pathname;
-        const isAuthPage = ['/', '/login', '/signup'].includes(path);
-
-        if (!user && !isAuthPage) {
-            window.location.href = '/login';
-            return;
-        } 
-        
-        if (user && isAuthPage && path !== '/') {
-            const target = user.role === 'admin' ? '/admin' : '/dashboard';
-            window.location.href = target;
-        }
-    },
-    
-    initUI() {
-        const user = this.getUser();
-        
-        // Handle Global Admin Link
-        const adminLinks = document.querySelectorAll('#admin-link-global, [href="/admin"]');
-        if (user && user.role !== 'admin') {
-            adminLinks.forEach(el => el.style.display = 'none');
-        }
-
-        // Handle Logout Buttons
-        document.querySelectorAll('#logout-btn, .logout-btn').forEach(btn => {
-            btn.onclick = (e) => {
-                e.preventDefault();
-                this.logout();
-            };
-        });
-
-        // Handle User Displays
-        const userDisplay = document.getElementById('user-name-display');
-        if (userDisplay && user) {
-            userDisplay.textContent = user.username;
-        }
+const App = {
+    init() {
+        this.renderExperienceHub();
+        this.renderRoomsPreview();
+        this.observeAnimations();
     },
 
-    initPageTransition() {
-        // Create overlay if not exists
-        if (!document.getElementById('page-overlay')) {
-            const overlay = document.createElement('div');
-            overlay.id = 'page-overlay';
-            overlay.innerHTML = '<div class="loader-bar"></div>';
-            document.body.appendChild(overlay);
+    renderExperienceHub() {
+        const container = document.getElementById('experience-hub');
+        if (!container) return;
+
+        const experiences = [
+            {
+                title: "Culinary Excellence",
+                desc: "Dine in our award-winning restaurants where international fusion meets local Kenyan heritage.",
+                img: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                title: "The Azure Spa",
+                desc: "Rejuvenate your soul with treatments inspired by ancient coastal wellness rituals.",
+                img: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                title: "Infinity Vistas",
+                desc: "Relax by our infinity pool overlooking the breathtaking Great Rift Valley horizon.",
+                img: "https://images.unsplash.com/photo-1564501049412-61c2a3083791?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+            }
+        ];
+
+        container.innerHTML = `
+            <div style="text-align: center; margin-bottom: 6rem;" class="reveal">
+                <h2 style="font-family: var(--font-serif); font-size: 3.5rem; color: var(--gold); margin-bottom: 1.5rem;">The Grand Experience</h2>
+                <p style="color: var(--text-dim); max-width: 700px; margin: 0 auto; font-size: 1.2rem;">From the moment you step into our ivory lobby, you transition from the ordinary to the extraordinary.</p>
+            </div>
+            <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));">
+                ${experiences.map((exp, i) => `
+                    <div class="card reveal" style="transition-delay: ${i * 0.2}s">
+                        <div style="height: 250px; background: url('${exp.img}') center/cover; border-radius: 4px; margin-bottom: 2rem;"></div>
+                        <h3 style="color: var(--gold); font-size: 1.8rem; margin-bottom: 1rem;">${exp.title}</h3>
+                        <p style="color: var(--text-dim);">${exp.desc}</p>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    },
+
+    async renderRoomsPreview() {
+        const container = document.getElementById('suites-container');
+        if (!container) return;
+
+        try {
+            const res = await fetch('/api/rooms'); // Only getting available ones
+            const rooms = await res.json();
             
-            // Hide after small delay
-            setTimeout(() => {
-                overlay.classList.add('hidden');
-            }, 500);
-        }
-
-        // Intercept all internal links
-        document.addEventListener('click', (e) => {
-            const link = e.target.closest('a');
-            if (link && link.href && link.href.startsWith(window.location.origin) && !link.target && !link.hasAttribute('download')) {
-                const path = link.getAttribute('href');
-                if (path && !path.startsWith('#')) {
-                    e.preventDefault();
-                    document.getElementById('page-overlay').classList.remove('hidden');
-                    document.body.classList.add('fade-exit');
-                    setTimeout(() => {
-                        window.location.href = path;
-                    }, 400);
+            // Just take first 2 unique types for preview
+            const uniqueTypes = [];
+            const previewRooms = rooms.filter(r => {
+                if (!uniqueTypes.includes(r.type_name) && uniqueTypes.length < 2) {
+                    uniqueTypes.push(r.type_name);
+                    return true;
                 }
-            }
-        });
-    }
-};
-
-// Auto check auth on all management pages
-auth.checkAuth();
-
-// Responsive Navigation Toggle
-document.addEventListener('DOMContentLoaded', () => {
-    auth.initPageTransition();
-    auth.initUI();
-    const hamburger = document.getElementById('hamburger');
-    const navLinks = document.querySelector('.nav-links');
-
-    if (hamburger && navLinks) {
-        hamburger.addEventListener('click', (e) => {
-            e.stopPropagation();
-            hamburger.classList.toggle('active');
-            navLinks.classList.toggle('active');
-        });
-
-        // Close menu when clicking outside
-        document.addEventListener('click', (e) => {
-            if (navLinks.classList.contains('active') && !navLinks.contains(e.target) && e.target !== hamburger) {
-                hamburger.classList.remove('active');
-                navLinks.classList.remove('active');
-            }
-        });
-
-        // Close menu when clicking a link
-        navLinks.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
-                hamburger.classList.remove('active');
-                navLinks.classList.remove('active');
+                return false;
             });
-        });
-    }
-});
 
-const api = {
-    async getRooms() {
-        const res = await fetch('/api/rooms');
-        return await res.json();
+            if (previewRooms.length === 0) {
+                container.innerHTML = `<p style="text-align: center; color: var(--text-dim);">No suites currently available for preview.</p>`;
+                return;
+            }
+
+            container.innerHTML = previewRooms.map((room, i) => `
+                <div style="display: flex; gap: 4rem; align-items: center; flex-wrap: wrap; margin-bottom: 4rem;" class="reveal">
+                    <div style="flex: 1; min-width: 300px; height: 500px; background: url('${room.img_url || 'https://images.unsplash.com/photo-1590490359683-658d3d23f972?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80'}') center/cover; border-radius: 12px; ${i % 2 !== 0 ? 'order: 2;' : ''}"></div>
+                    <div style="flex: 1; min-width: 300px; padding: 2rem; ${i % 2 !== 0 ? 'order: 1;' : ''}">
+                        <h3 style="font-family: var(--font-serif); font-size: 2.5rem; color: var(--gold); margin-bottom: 1.5rem;">${room.type_name}</h3>
+                        <p style="font-size: 1.1rem; line-height: 2; margin-bottom: 2rem;">${room.description}</p>
+                        <ul style="list-style: none; color: var(--text-dim); margin-bottom: 2rem;">
+                            ${room.amenities.split(',').map(a => `<li style="margin-bottom: 0.5rem;">✓ ${a.trim()}</li>`).join('')}
+                        </ul>
+                        <div style="display: flex; align-items: center; gap: 2rem;">
+                            <div>
+                                <span style="font-size: 0.8rem; color: var(--gold); text-transform: uppercase;">Starting from</span>
+                                <p style="font-size: 1.5rem; font-weight: 700;">KES ${Math.round(room.base_price).toLocaleString()}</p>
+                            </div>
+                            <a href="/booker/index.html" class="btn-primary">Reserve Now</a>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+        } catch (err) {
+            console.error("Failed to load room previews", err);
+        }
     },
 
-    async addRoom(room) {
-        const res = await fetch('/api/rooms', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(room)
-        });
-        return await res.json();
-    },
-    
-    async deleteRoom(id) {
-        const res = await fetch(`/api/rooms/${id}`, {
-            method: 'DELETE'
-        });
-        return await res.json();
-    },
+    observeAnimations() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-up');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
 
-    async getRoomReservations(roomId) {
-        const res = await fetch(`/api/rooms/${roomId}/reservations`);
-        return await res.json();
-    },
-
-    async getReservations() {
-        const res = await fetch('/api/reservations');
-        return await res.json();
-    },
-
-    async getGuests() {
-        const res = await fetch('/api/guests');
-        return await res.json();
-    },
-
-    async addReservation(reservation) {
-        const res = await fetch('/api/reservations', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(reservation)
-        });
-        return await res.json();
-    },
-
-    async deleteReservation(id) {
-        const res = await fetch(`/api/reservations/${id}`, {
-            method: 'DELETE'
-        });
-        return await res.json();
-    },
-
-    async updateReservationStatus(id, status) {
-        const res = await fetch(`/api/reservations/${id}/status`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ status })
-        });
-        return await res.json();
-    },
-
-    async submitFeedback(data) {
-        const res = await fetch('/api/feedback', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        });
-        return await res.json();
-    },
-
-    async getUsers() {
-        const res = await fetch('/api/users');
-        return await res.json();
-    },
-
-    async updateUserRole(userId, role) {
-        const res = await fetch('/api/users/role', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId, role })
-        });
-        return await res.json();
-    },
-
-    async deleteUser(userId) {
-        const res = await fetch(`/api/users/${userId}`, {
-            method: 'DELETE'
-        });
-        return await res.json();
-    },
-
-    async getOverview() {
-        const [rooms, reservations] = await Promise.all([
-            this.getRooms(),
-            this.getReservations()
-        ]);
-        return { rooms, reservations };
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
     }
 };
 
-window.api = api;
+document.addEventListener('DOMContentLoaded', () => App.init());

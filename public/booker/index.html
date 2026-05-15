@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accommodations | Grand Horizon Hotel</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="icon" type="image/svg+xml" href="/logo.svg">
+</head>
+<body>
+    <div class="app-wrapper">
+        <nav class="nav-container">
+            <div class="logo">
+                <a href="/">
+                    <img src="/logo.svg" alt="Grand Horizon Logo">
+                    <span>Grand Horizon</span>
+                </a>
+            </div>
+            <button class="menu-toggle" id="menu-btn">☰</button>
+            <div class="nav-links" id="nav-content">
+                <!-- Dynamic Nav -->
+            </div>
+        </nav>
+
+        <main>
+            <div style="text-align: center; margin-bottom: 6rem;">
+                <h1 style="color: var(--gold); font-family: var(--font-serif); font-size: 3rem;">Exquisite Accommodations</h1>
+                <p style="color: var(--text-dim); font-size: 1.1rem; max-width: 600px; margin: 1rem auto;">Select your sanctuary from our curated collection of Kenyan luxury wings.</p>
+                
+                <div id="filters" style="display: flex; justify-content: center; gap: 1rem; margin-top: 3rem;">
+                    <button class="filter-btn active" data-type="all">All Wings</button>
+                    <button class="filter-btn" data-type="Maasai Mara">The Mara</button>
+                    <button class="filter-btn" data-type="Lamu">Lamu coastal</button>
+                    <button class="filter-btn" data-type="Rift">Great Rift</button>
+                </div>
+            </div>
+            
+            <div id="room-list" class="grid" style="min-height: 400px;">
+                <div class="card" style="grid-column: 1/-1; text-align: center;">
+                    <p>Fetching availability...</p>
+                </div>
+            </div>
+
+            <section id="reservation-section" style="padding: 10rem 0; display: none; scroll-margin-top: 100px;">
+                <div class="form-card">
+                    <h2 style="color: var(--gold); margin-bottom: 2rem; text-align: center; font-family: var(--font-serif);">Secure Your Reservation</h2>
+                    <form id="booking-form">
+                        <input type="hidden" id="selected-room-number" name="room_number">
+                        <input type="hidden" id="room-base-price">
+                        
+                        <div class="form-group">
+                            <label>Selected Wing</label>
+                            <input type="text" id="selected-room-text" readonly style="border: none; background: transparent; padding: 0; color: var(--gold); font-weight: 700; font-size: 1.2rem;">
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                            <div class="form-group">
+                                <label>Check-in Date</label>
+                                <input type="date" name="check_in" id="check-in" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Check-out Date</label>
+                                <input type="date" name="check_out" id="check-out" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" name="client_name" placeholder="John Doe" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" name="client_email" placeholder="john@example.com" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="text" name="client_phone" placeholder="+254..." required>
+                        </div>
+
+                        <div style="background: rgba(212, 175, 55, 0.1); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; text-align: center;">
+                            <p style="font-size: 0.8rem; text-transform: uppercase; color: var(--gold); margin-bottom: 0.5rem;">Estimated Total</p>
+                            <h3 id="total-price-display" style="font-size: 2rem;">KES 0.00</h3>
+                        </div>
+
+                        <button type="submit" class="btn-primary" style="width: 100%;">Confirm Reservation</button>
+                    </form>
+                    <p id="booking-feedback" style="text-align: center; margin-top: 1rem; display: none;"></p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="/nav.js"></script>
+    <script>
+        let allRooms = [];
+
+        async function loadRooms() {
+            try {
+                const res = await fetch('/api/rooms');
+                allRooms = await res.json();
+                renderRooms(allRooms);
+            } catch (err) {
+                console.error(err);
+                document.getElementById('room-list').innerHTML = '<p style="text-align: center;">Unable to load luxury wings at this time.</p>';
+            }
+        }
+
+        function renderRooms(rooms) {
+            const container = document.getElementById('room-list');
+            
+            if (rooms.length === 0) {
+                container.innerHTML = '<div class="card" style="grid-column: 1/-1; text-align: center;"><p>No wings available matching your criteria. Please contact our concierge.</p></div>';
+                return;
+            }
+
+            container.innerHTML = rooms.map(room => {
+                return `
+                <div class="card animate-up" style="display: flex; flex-direction: column;">
+                    <div style="height: 200px; background: url('${room.img_url || 'https://images.unsplash.com/photo-1590490360182-c33d57733427?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'}') center/cover; border-radius: 8px; margin-bottom: 1.5rem;"></div>
+                    <div style="flex: 1;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                            <h3 style="font-family: var(--font-serif); font-size: 1.4rem; color: var(--gold);">${room.type_name}</h3>
+                            <div style="text-align: right;">
+                                <span style="font-weight: 700; display: block;">KES ${Math.round(room.base_price).toLocaleString()}</span>
+                                <span style="font-size: 0.7rem; color: var(--text-dim);">PER NIGHT</span>
+                            </div>
+                        </div>
+                        <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1.5rem; line-height: 1.8;">${room.description}</p>
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem;">
+                            ${room.amenities.split(',').map(a => `<span style="font-size: 0.65rem; padding: 0.2rem 0.5rem; border: 1px solid var(--border); border-radius: 20px; color: var(--gold);">${a.trim()}</span>`).join('')}
+                        </div>
+                    </div>
+                    <button onclick="selectRoom('${room.room_number}', '${room.type_name}', ${room.base_price})" class="btn-primary" style="width: 100%;">Select This Wing</button>
+                </div>
+                `;
+            }).join('');
+        }
+
+        // Filtering logic
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                
+                const type = e.target.getAttribute('data-type');
+                if (type === 'all') {
+                    renderRooms(allRooms);
+                } else {
+                    const filtered = allRooms.filter(r => r.type_name.toLowerCase().includes(type.toLowerCase()));
+                    renderRooms(filtered);
+                }
+            });
+        });
+
+        function selectRoom(num, name, price) {
+            document.getElementById('selected-room-number').value = num;
+            document.getElementById('selected-room-text').value = `${name} (Room ${num})`;
+            document.getElementById('room-base-price').value = price;
+            document.getElementById('reservation-section').style.display = 'block';
+            document.getElementById('reservation-section').scrollIntoView({ behavior: 'smooth' });
+            calculatePrice();
+        }
+
+        function calculatePrice() {
+            const checkIn = new Date(document.getElementById('check-in').value);
+            const checkOut = new Date(document.getElementById('check-out').value);
+            const basePrice = parseFloat(document.getElementById('room-base-price').value || 0);
+            
+            if (checkIn && checkOut && checkOut > checkIn) {
+                const diffTime = Math.abs(checkOut - checkIn);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                const total = diffDays * basePrice;
+                document.getElementById('total-price-display').textContent = `KES ${total.toLocaleString()}`;
+                return total;
+            }
+            document.getElementById('total-price-display').textContent = `KES 0.00`;
+            return 0;
+        }
+
+        document.getElementById('check-in').addEventListener('change', calculatePrice);
+        document.getElementById('check-out').addEventListener('change', calculatePrice);
+
+        document.getElementById('booking-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const totalPrice = calculatePrice();
+            if (totalPrice <= 0) {
+                alert("Please select valid dates.");
+                return;
+            }
+
+            const fd = new FormData(e.target);
+            const data = Object.fromEntries(fd.entries());
+            data.total_price = totalPrice;
+            const feedback = document.getElementById('booking-feedback');
+
+            try {
+                const res = await fetch('/api/bookings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (res.ok) {
+                    feedback.textContent = "Reservation Confirmed. We look forward to your arrival.";
+                    feedback.style.color = "var(--gold)";
+                    feedback.style.display = "block";
+                    setTimeout(() => window.location.href = '/', 3000);
+                } else {
+                    feedback.textContent = "Reservation failed. Please try again.";
+                    feedback.style.color = "#ff4d4d";
+                    feedback.style.display = "block";
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        });
+
+        loadRooms();
+    </script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Dashboard | Staff</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="icon" type="image/svg+xml" href="/logo.svg">
+</head>
+<body>
+    <div class="app-wrapper">
+        <nav class="nav-container">
+            <div class="logo">
+                <a href="/">
+                    <img src="/logo.svg" alt="Grand Horizon Logo">
+                    <span>Grand Horizon</span>
+                </a>
+            </div>
+            <button class="menu-toggle" id="menu-btn">☰</button>
+            <div class="nav-links" id="nav-content">
+                <!-- Dynamic Nav -->
+            </div>
+        </nav>
+
+        <main>
+            <div style="margin-bottom: 4rem;">
+                <h1 style="font-family: var(--font-serif); color: var(--gold);">Hotel Operations</h1>
+                <p style="color: var(--text-dim);" id="welcome-msg">Welcome back to the Command Center.</p>
+            </div>
+
+            <div class="grid" id="dashboard-tiles">
+                <a href="/staff/bookings.html" class="card">
+                    <h3 style="color: var(--gold); margin-bottom: 1rem;">Front Desk</h3>
+                    <p style="color: var(--text-dim); font-size: 0.9rem;">Manage room reservations, check-ins, and guest departures.</p>
+                </a>
+                <a href="/admin/rooms.html" class="card">
+                    <h3 style="color: var(--gold); margin-bottom: 1rem;">Housekeeping</h3>
+                    <p style="color: var(--text-dim); font-size: 0.9rem;">Monitor room status and manage maintenance logs.</p>
+                </a>
+                <div class="card">
+                    <h3 style="color: var(--gold); margin-bottom: 1rem;">Concierge Logs</h3>
+                    <p style="color: var(--text-dim); font-size: 0.9rem;">Review guest inquiries and service requests from the landing portal.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/nav.js"></script>
+    <script>
+        async function checkAuth() {
+            const res = await fetch('/api/me');
+            if (!res.ok) window.location.href = '/login.html';
+            const data = await res.json();
+            document.getElementById('welcome-msg').textContent = `Welcome back, ${data.user.username}. Clearance: ${data.role.toUpperCase()}.`;
+            
+            if (data.role === 'admin') {
+                document.getElementById('dashboard-tiles').innerHTML += `
+                    <a href="/admin/register.html" class="card">
+                        <h3 style="color: var(--gold); margin-bottom: 1rem;">Registry Control</h3>
+                        <p style="color: var(--text-dim); font-size: 0.9rem;">Onboard new staff and authorize administrative credentials.</p>
+                    </a>
+                `;
+            }
+        }
+        checkAuth();
+    </script>
+</body>
+</html>

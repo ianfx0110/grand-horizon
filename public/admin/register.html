@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Registry | Admin</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="icon" type="image/svg+xml" href="/logo.svg">
+</head>
+<body>
+    <div class="app-wrapper">
+        <nav class="nav-container">
+            <div class="logo">
+                <a href="/">
+                    <img src="/logo.svg" alt="Grand Horizon Logo">
+                    <span>Grand Horizon</span>
+                </a>
+            </div>
+            <button class="menu-toggle" id="menu-btn">☰</button>
+            <div class="nav-links" id="nav-content">
+                <!-- Dynamic Nav -->
+            </div>
+        </nav>
+
+        <main>
+            <div class="form-card">
+                <h2 style="color: var(--gold); font-family: var(--font-serif); text-align: center; margin-bottom: 1.5rem;">Personnel Registry</h2>
+                <p style="text-align: center; margin-bottom: 2rem; color: var(--text-dim); font-size: 0.9rem;">Onboard new hotel staff or authorized administrators.</p>
+                
+                <form id="register-form">
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" name="username" placeholder="e.g. jdoe_staff" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Registry Password</label>
+                        <input type="password" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Clearance Tier</label>
+                        <select name="role" required>
+                            <option value="staff">Hospitality Staff</option>
+                            <option value="admin">System Administrator</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-primary" style="width: 100%;">Authorize Account</button>
+                    <p id="msg" style="text-align: center; margin-top: 1rem; font-size: 0.8rem; display: none;"></p>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script src="/nav.js"></script>
+    <script>
+        async function checkAdmin() {
+            const res = await fetch('/api/me');
+            if (!res.ok) window.location.href = '/login.html';
+            const data = await res.json();
+            if (data.role !== 'admin') {
+                alert('Insufficient clearance level.');
+                window.location.href = '/staff/dashboard.html';
+            }
+        }
+        checkAdmin();
+
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fd = new FormData(e.target);
+            const data = Object.fromEntries(fd.entries());
+            const msgEl = document.getElementById('msg');
+
+            try {
+                const res = await fetch('/api/admin/users', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (res.ok) {
+                    msgEl.textContent = 'Registry updated. Personnel authorized.';
+                    msgEl.style.color = 'var(--gold)';
+                    msgEl.style.display = 'block';
+                    e.target.reset();
+                } else {
+                    const err = await res.json();
+                    msgEl.textContent = 'Operation failed: ' + (err.error || 'Check fields');
+                    msgEl.style.color = '#ff4d4d';
+                    msgEl.style.display = 'block';
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        });
+    </script>
+</body>
+</html>
