@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hotel Dashboard | Staff</title>
-    <link rel="stylesheet" href="/style.css">
-    <link rel="icon" type="image/svg+xml" href="/logo.svg">
+    <link rel="stylesheet" href="/public/style.css">
+    <link rel="icon" type="image/svg+xml" href="/public/logo.svg">
 </head>
 <body>
     <div class="app-wrapper">
         <nav class="nav-container">
             <div class="logo">
                 <a href="/">
-                    <img src="/logo.svg" alt="Grand Horizon Logo">
+                    <img src="/public/logo.svg" alt="Grand Horizon Logo">
                     <span>Grand Horizon</span>
                 </a>
             </div>
@@ -45,7 +45,7 @@
         </main>
     </div>
 
-    <script src="/nav.js"></script>
+    <script src="/public/nav.js"></script>
     <script>
         async function checkAuth() {
             const res = await fetch('/api/me');

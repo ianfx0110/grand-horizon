@@ -45,13 +45,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const role = data.role;
             let html = `
                 <a href="/">Home</a>
-                <a href="/staff/dashboard.html">Dashboard</a>
-                <a href="/staff/bookings.html">Reservations</a>
+                <a href="/public/staff/dashboard.html">Dashboard</a>
+                <a href="/public/staff/bookings.html">Reservations</a>
             `;
             
             if (role === 'admin') {
-                html += `<a href="/admin/rooms.html">Rooms (Admin)</a>`;
-                html += `<a href="/admin/register.html">Add Staff</a>`;
+                html += `<a href="/public/admin/rooms.html">Rooms (Admin)</a>`;
+                html += `<a href="/public/admin/register.html">Add Staff</a>`;
             }
             
             html += `<a href="#" id="logout-link" style="color: #ff4d4d;">Logout (${data.user.username})</a>`;
@@ -65,10 +65,10 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             navLinks.innerHTML = `
                 <a href="/">Home</a>
-                <a href="/about.html">About</a>
-                <a href="/faqs.html">FAQs</a>
-                <a href="/booker/index.html">Rooms</a>
-                <a href="/login.html" class="btn-primary" style="padding: 0.5rem 1rem; color: var(--navy);">Staff Login</a>
+                <a href="/public/about.html">About</a>
+                <a href="/public/faqs.html">FAQs</a>
+                <a href="/public/booker/index.html">Rooms</a>
+                <a href="/public/login.html" class="btn-primary" style="padding: 0.5rem 1rem; color: var(--navy);">Staff Login</a>
             `;
         }
 

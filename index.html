@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grand Horizon | Elite Shuttle & Safaris</title>
+    <title>Grand Horizon Hotel & Resort | Luxury Redefined</title>
     <link rel="stylesheet" href="/public/style.css">
     <link rel="icon" type="image/svg+xml" href="/public/logo.svg">
 </head>
@@ -12,7 +12,7 @@
         <nav class="nav-container">
             <div class="logo">
                 <a href="/">
-                    <img src="public/logo.svg" alt="Grand Horizon Logo">
+                    <img src="/public/logo.svg" alt="Grand Horizon Logo">
                     <span>Grand Horizon</span>
                 </a>
             </div>
@@ -22,67 +22,133 @@
             </div>
         </nav>
 
-        <main>
-            <section class="hero">
-                <h1>The Gold Standard of Travel</h1>
-                <p>Experience Kenya's landscapes in unparalleled luxury. From business shuttles to custom safaris, we redefine the journey.</p>
-                <div style="display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;">
-                    <a href="/booker/index.html" class="btn-primary">Reserve Your Seat</a>
-                    <a href="/about.html" class="btn-primary" style="background: transparent; border: 1px solid var(--gold); color: var(--gold);">Our Heritage</a>
+        <main style="padding-top: 0; max-width: 100%; width: 100%;">
+            <!-- Hero Section -->
+            <section class="hero" style="min-height: 90vh; display: flex; flex-direction: column; justify-content: center; background: linear-gradient(rgba(10,17,40,0.7), rgba(10,17,40,0.7)), url('https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80'); background-size: cover; background-position: center;">
+                <div style="max-width: 1200px; margin: 0 auto; padding: 0 2rem;">
+                    <h1 style="font-size: 5rem; margin-bottom: 2rem;">Beyond Five Stars.</h1>
+                    <p style="font-size: 1.5rem; max-width: 800px; margin-bottom: 3rem; color: var(--text-main);">Welcome to Grand Horizon Hotel & Resort, where every sunset is a celebration and every stay is a masterpiece of comfort and elegance.</p>
+                    <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+                        <a href="/booker/index.html" class="btn-primary" style="padding: 1.5rem 3rem; font-size: 1rem;">Book Your Sanctuary</a>
+                        <a href="#amenities" class="btn-primary" style="background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: 1.5rem 3rem; font-size: 1rem;">Discover Our World</a>
+                    </div>
                 </div>
             </section>
 
-            <section style="padding: 4rem 0;">
+            <!-- Experience Section (DOM JS Powered) -->
+            <section id="experience-hub" style="padding: 10rem 2rem; max-width: 1200px; margin: 0 auto;">
+                <!-- Content injected via app.js -->
+            </section>
+
+            <!-- Rooms Preview Section (DOM JS Powered) -->
+            <section id="rooms-preview" style="padding: 10rem 2rem; background: rgba(212, 175, 55, 0.03);">
+                <div style="max-width: 1200px; margin: 0 auto;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 6rem; flex-wrap: wrap; gap: 2rem;">
+                        <div style="max-width: 600px;">
+                            <h2 style="font-family: var(--font-serif); font-size: 3.5rem; color: var(--gold); margin-bottom: 1.5rem;">Luxury Suites</h2>
+                            <p style="color: var(--text-dim); font-size: 1.1rem;">Explore our curated selection of Kenyan sanctuaries, from the Mara plains to the Lamu coast.</p>
+                        </div>
+                        <a href="/booker/index.html" class="btn-primary">View All Accommodations</a>
+                    </div>
+
+                    <div id="suites-container" style="display: flex; gap: 2rem; flex-direction: column;">
+                        <!-- Suite previews injected via app.js -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Concierge & Portals -->
+            <section id="concierge-hub" style="padding: 10rem 2rem; max-width: 1200px; margin: 0 auto; border-top: 1px solid var(--border);">
+                <div style="text-align: center; margin-bottom: 6rem;">
+                    <h2 style="font-family: var(--font-serif); font-size: 3.5rem; color: var(--gold); margin-bottom: 1.5rem;">Guest Concierge</h2>
+                    <p style="color: var(--text-dim); max-width: 700px; margin: 0 auto; font-size: 1.2rem;">Our virtual concierge is at your service 24/7. Explore our offerings or connect with a humanity-first staff member.</p>
+                </div>
+
                 <div class="grid">
-                    <div class="card">
-                        <h3 style="color: var(--gold); margin-bottom: 1rem;">Elite Shuttle</h3>
-                        <p style="color: var(--text-dim); font-size: 0.9rem;">Regular executive departures between Nairobi, Eldoret, and Nakuru.</p>
+                    <div class="card animate-up">
+                        <div style="font-size: 2.5rem; color: var(--gold); margin-bottom: 1.5rem;">❖</div>
+                        <h3 style="margin-bottom: 1rem;">Service Directory</h3>
+                        <ul style="list-style: none; color: var(--text-dim); font-size: 0.9rem; line-height: 2;">
+                            <li>• In-Suite Kenyan Safari Tours</li>
+                            <li>• Coastal Fusion Dining</li>
+                            <li>• Azure Spa & Wellness</li>
+                        </ul>
+                        <a href="/faqs.html" style="display: block; margin-top: 2rem; color: var(--gold); font-weight: 600;">Learn More →</a>
                     </div>
-                    <div class="card">
-                        <h3 style="color: var(--gold); margin-bottom: 1rem;">Custom Safaris</h3>
-                        <p style="color: var(--text-dim); font-size: 0.9rem;">Bespoke tours to Maasai Mara, Amboseli, and beyond with professional guides.</p>
+                    <div class="card animate-up" style="transition-delay: 0.2s">
+                        <div style="font-size: 2.5rem; color: var(--gold); margin-bottom: 1.5rem;">?</div>
+                        <h3 style="margin-bottom: 1rem;">Frequent Inquiries</h3>
+                        <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 2rem;">Answers to check-in timings, dietary requests, and transportation logistics.</p>
+                        <a href="/faqs.html" class="btn-primary" style="background: transparent; border: 1px solid var(--gold); color: var(--gold); width: 100%; text-align: center;">View FAQs</a>
                     </div>
-                    <div class="card">
-                        <h3 style="color: var(--gold); margin-bottom: 1rem;">Exclusive Hire</h3>
-                        <p style="color: var(--text-dim); font-size: 0.9rem;">Private luxury vehicle hire for business delegations and special events.</p>
+                    <div class="card animate-up" style="transition-delay: 0.4s">
+                        <div style="font-size: 2.5rem; color: var(--gold); margin-bottom: 1.5rem;">⚲</div>
+                        <h3 style="margin-bottom: 1rem;">Staff Portals</h3>
+                        <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 2rem;">Authorized personnel only. Access room management and guest manifest systems.</p>
+                        <a href="/login.html" class="btn-primary" style="width: 100%; text-align: center;">Personnel Login</a>
                     </div>
-                </div>
-            </section>
-
-            <section id="inquiry" style="padding: 6rem 0;">
-                <div class="form-card">
-                    <h2 style="text-align: center; color: var(--gold); margin-bottom: 2rem; font-family: var(--font-serif);">Direct WhatsApp Inquiry</h2>
-                    <form id="landing-wa-form">
-                        <div class="form-group">
-                            <label>Destination / Interest</label>
-                            <input type="text" name="interest" placeholder="e.g. Nairobi to Eldoret / Maasai Mara Safari" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Your Name</label>
-                            <input type="text" name="name" placeholder="John Doe" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Preferred Date</label>
-                            <input type="date" name="date" required>
-                        </div>
-                        <button type="submit" class="btn-primary" style="width: 100%;">Connect on WhatsApp</button>
-                    </form>
                 </div>
             </section>
         </main>
 
-        <footer style="padding: 4rem 2rem; border-top: 1px solid var(--border); text-align: center; color: var(--text-dim); background: rgba(0,0,0,0.2);">
-            <p>&copy; 2026 Grand Horizon Elite Shuttles. All Rights Reserved.</p>
+        <footer style="padding: 6rem 2rem; border-top: 1px solid var(--border); text-align: center; background: rgba(0,0,0,0.2);">
+            <div style="max-width: 1200px; margin: 0 auto;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4rem; text-align: left; flex-wrap: wrap; gap: 3rem;">
+                    <div style="max-width: 300px;">
+                        <h2 style="color: var(--gold); font-family: var(--font-serif); margin-bottom: 1rem;">Grand Horizon</h2>
+                        <p style="color: var(--text-dim); font-size: 0.9rem;">The premier luxury destination in Kenya, blending heritage with modern excellence since 2026.</p>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--gold); margin-bottom: 1.5rem; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 2px;">Explore</h4>
+                        <ul style="list-style: none; color: var(--text-dim); line-height: 2;">
+                            <li><a href="/about.html">About Us</a></li>
+                            <li><a href="/booker/index.html">Accommodations</a></li>
+                            <li><a href="/faqs.html">FAQs</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--gold); margin-bottom: 1.5rem; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 2px;">Contact</h4>
+                        <ul style="list-style: none; color: var(--text-dim); line-height: 2;">
+                            <li>reservations@grandhorizon.com</li>
+                            <li>+254 700 000 000</li>
+                            <li>Eldoret-Nairobi Highway, Kenya</li>
+                        </ul>
+                    </div>
+                </div>
+                <p style="color: var(--text-dim); font-size: 0.8rem; border-top: 1px solid var(--border); padding-top: 2rem;">&copy; 2026 Grand Horizon Hotel & Resort. All Rights Reserved.</p>
+            </div>
         </footer>
     </div>
 
-    <script src="/nav.js"></script>
+    <script src="/public/nav.js"></script>
+    <script src="/public/app.js"></script>
     <script>
-        document.getElementById('landing-wa-form').addEventListener('submit', (e) => {
+        document.getElementById('landing-inquiry-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const fd = new FormData(e.target);
-            const msg = `Greetings Grand Horizon! I am ${fd.get('name')}. I am interested in *${fd.get('interest')}* for the date of ${fd.get('date')}. Please provide booking details.`;
-            window.open(`https://wa.me/254115481162?text=${encodeURIComponent(msg)}`, '_blank');
+            const data = Object.fromEntries(fd.entries());
+            const msgEl = document.getElementById('inquiry-msg');
+
+            try {
+                const res = await fetch('/api/inquiries', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (res.ok) {
+                    msgEl.textContent = "Thank you. Our concierge will be in touch shortly.";
+                    msgEl.style.color = "var(--gold)";
+                    msgEl.style.display = "block";
+                    e.target.reset();
+                } else {
+                    msgEl.textContent = "Something went wrong. Please try again.";
+                    msgEl.style.color = "#ff4d4d";
+                    msgEl.style.display = "block";
+                }
+            } catch (err) {
+                console.error(err);
+            }
         });
     </script>
 </body>

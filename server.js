@@ -3,9 +3,6 @@ const session = require("express-session");
 const bcrypt = require("bcrypt");
 const path = require("path");
 const mysql = require("mysql2");
-const dotenv = require("dotenv");
-
-dotenv.config();
 
 const app = express();
 const PORT = 3000;
@@ -58,7 +55,7 @@ const isSuperAdmin = (req, res, next) => {
 // --- API ROUTES ---
 
 // Public Room Routes
-app.get("/api/rooms", (req, res) => {
+app.get("/rooms", (req, res) => {
   const q = `
     SELECT r.*, rt.name as type_name, rt.description, rt.base_price, rt.capacity, rt.amenities
     FROM rooms r
@@ -71,7 +68,7 @@ app.get("/api/rooms", (req, res) => {
   });
 });
 
-app.post("/api/bookings", (req, res) => {
+app.post("/bookings", (req, res) => {
   const { room_number, client_name, client_email, client_phone, check_in, check_out, total_price } = req.body;
   const q = `INSERT INTO bookings (room_number, client_name, client_email, client_phone, check_in, check_out, total_price) VALUES (?, ?, ?, ?, ?, ?, ?)`;
   dbConn.query(q, [room_number, client_name, client_email, client_phone, check_in, check_out, total_price], (err, results) => {
@@ -84,7 +81,7 @@ app.post("/api/bookings", (req, res) => {
   });
 });
 
-app.post("/api/login", (req, res) => {
+app.post("/login", (req, res) => {
   const { username, password } = req.body;
   dbConn.query(
     "SELECT * FROM admin_users WHERE username = ?",
@@ -105,12 +102,12 @@ app.post("/api/login", (req, res) => {
   );
 });
 
-app.post("/api/logout", (req, res) => {
+app.post("/logout", (req, res) => {
   req.session.destroy();
   res.json({ message: "Logged out" });
 });
 
-app.get("/api/me", (req, res) => {
+app.get("/me", (req, res) => {
   if (req.session.user) {
     res.json({ user: req.session.user, role: req.session.role });
   } else {
@@ -119,7 +116,7 @@ app.get("/api/me", (req, res) => {
 });
 
 // Admin/Staff Protected Routes
-app.get("/api/admin/bookings", isAuth, (req, res) => {
+app.get("/admin/bookings", isAuth, (req, res) => {
   const q = `
     SELECT b.*, rt.name as room_type
     FROM bookings b
@@ -133,7 +130,7 @@ app.get("/api/admin/bookings", isAuth, (req, res) => {
   });
 });
 
-app.get("/api/admin/rooms", isAuth, (req, res) => {
+app.get("/admin/rooms", isAuth, (req, res) => {
   const q = `
     SELECT r.*, rt.name as type_name, rt.base_price
     FROM rooms r
@@ -145,7 +142,7 @@ app.get("/api/admin/rooms", isAuth, (req, res) => {
   });
 });
 
-app.post("/api/admin/rooms", isAuth, (req, res) => {
+app.post("/admin/rooms", isAuth, (req, res) => {
   const { room_number, type_id, floor } = req.body;
   const q = "INSERT INTO rooms (room_number, type_id, floor) VALUES (?, ?, ?)";
   dbConn.query(q, [room_number, type_id, floor], (err) => {
@@ -154,7 +151,7 @@ app.post("/api/admin/rooms", isAuth, (req, res) => {
   });
 });
 
-app.get("/api/admin/room-types", isAuth, (req, res) => {
+app.get("/admin/room-types", isAuth, (req, res) => {
     dbConn.query("SELECT * FROM room_types", (err, results) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json(results);
@@ -162,7 +159,7 @@ app.get("/api/admin/room-types", isAuth, (req, res) => {
 });
 
 // User Management (SuperAdmin Only)
-app.post("/api/admin/users", isSuperAdmin, async (req, res) => {
+app.post("/admin/users", isSuperAdmin, async (req, res) => {
   const { username, password, role } = req.body;
   if (!username || !password || !role) return res.status(400).json({ error: "Missing fields" });
   
@@ -182,7 +179,7 @@ app.post("/api/admin/users", isSuperAdmin, async (req, res) => {
 });
 
 // Inquiry API
-app.post("/api/inquiries", (req, res) => {
+app.post("/inquiries", (req, res) => {
     const { full_name, email, subject, message } = req.body;
     dbConn.query("INSERT INTO inquiries (full_name, email, subject, message) VALUES (?, ?, ?, ?)", 
     [full_name, email, subject, message], (err, results) => {

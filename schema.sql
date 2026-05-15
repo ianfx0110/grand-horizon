@@ -63,11 +63,3 @@ INSERT IGNORE INTO room_types (name, description, base_price, capacity, amenitie
 ('Lamu Coastal Sanctuary', 'Brings the serenity of the Indian Ocean inland. Swahili-inspired architecture with ivory accents and a spacious sunlit lounge.', 14500.00, 1, 'WiFi, Working Desk, AC, Luxury Bathtub, Queen Bed'),
 ('Great Rift Valley Presidential Wing', 'Peak luxury at the horizon. Includes two master bedrooms, private dining room with a dedicated chef, and a 360-degree observation deck.', 55000.00, 4, 'WiFi, Private Chef, 24/7 Butler, Private Pool, Observation Deck'),
 ('Amboseli Garden Villa', 'Tucked away in our botanical gardens. Features a private garden path and windows that frame the morning sun.', 12000.00, 2, 'WiFi, Private Garden, AC, Coffee Station');
-
--- Seed Rooms
-INSERT IGNORE INTO rooms (room_number, type_id, floor, status) VALUES
-('M101', 1, 1, 'available'),
-('M102', 1, 1, 'available'),
-('L201', 2, 2, 'available'),
-('R301', 3, 3, 'available'),
-('A001', 4, 0, 'available');
